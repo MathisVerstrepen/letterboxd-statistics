@@ -1,5 +1,3 @@
-github.com/MathisVerstrepen/go-module v0.0.0-20240705101144-26a6c6882ce5 h1:xxrWT6/52M3899vpQFr2933jTuI47wZ3ExINnKJ04Ig=
-github.com/MathisVerstrepen/go-module v0.0.0-20240705101144-26a6c6882ce5/go.mod h1:UeG5Dg9t5GyTa6X371B7QoOBSzN0YTgVfp14bLq0Gr8=
 github.com/MathisVerstrepen/go-module v0.0.0-20240710163757-fc961700c44f h1:kqpp1OoATrnv/dPhwkPqCbIEUbk6Iynt8xGFz4cuFYw=
 github.com/MathisVerstrepen/go-module v0.0.0-20240710163757-fc961700c44f/go.mod h1:UeG5Dg9t5GyTa6X371B7QoOBSzN0YTgVfp14bLq0Gr8=
 golang.org/x/net v0.25.0 h1:d/OCCoBEUq33pjydKrGQhw7IlUPI2Oylr+8qLx49kac=

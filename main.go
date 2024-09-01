@@ -13,7 +13,10 @@ func main() {
 	letterboxdFetchers.AddFetchers(rawFetchers)
 
 	letterboxdGetter := letterboxd.LetterboxdGetter{Fetchers: letterboxdFetchers}
-	popularMovies := letterboxdGetter.GetPopularMovies(10, 0, letterboxd.Week)
+	popularMovies, _ := letterboxdGetter.GetPopularMovies(10, 0, letterboxd.Week)
 
-	fmt.Println(popularMovies)
+	for _, movie := range popularMovies.Movies {
+		movieStat, _ := letterboxdGetter.GetMovieStats(movie.Link)
+		fmt.Printf("%s : %+v\n", movie.Slug, *movieStat)
+	}
 }
