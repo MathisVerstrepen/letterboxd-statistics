@@ -5,6 +5,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"sync"
 
 	"github.com/MathisVerstrepen/go-module/gosoup"
 	"github.com/MathisVerstrepen/go-module/webfetch"
@@ -186,4 +187,33 @@ func (lg LetterboxdGetter) GetMovieStats(movieUrl string) (*MovieStat, error) {
 		ListCount:  listStat,
 		LikeCount:  likeStat,
 	}, nil
+}
+
+func (lg LetterboxdGetter) GetMovieStatsThreaded(movies *PopularMovies) (map[string]*MovieStat, error) {
+	var moviesStat map[string]*MovieStat = make(map[string]*MovieStat, len(movies.Movies))
+
+	sem := make(chan struct{}, 10) // au max, 10 coroutines en même temps
+	var mu sync.Mutex              // pour protéger l'accès à la map moviesStat
+	var wg sync.WaitGroup          // pour attendre toutes les coroutines même après sortie de boucle
+
+	for _, movie := range movies.Movies {
+		wg.Add(1)
+		sem <- struct{}{}
+
+		go func(movieId string, movieUrl string) {
+			defer wg.Done()
+
+			movieStat, _ := lg.GetMovieStats(movieUrl)
+
+			mu.Lock()
+			moviesStat[movieId] = movieStat
+			mu.Unlock()
+
+			<-sem
+		}(movie.Id, movie.Link)
+	}
+
+	wg.Wait()
+
+	return moviesStat, nil
 }
