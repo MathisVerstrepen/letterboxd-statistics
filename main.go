@@ -17,7 +17,7 @@ func main() {
 	letterboxdFetchers.AddFetchers(rawFetchers)
 
 	letterboxdGetter := letterboxd.LetterboxdGetter{Fetchers: letterboxdFetchers}
-	popularMovies, _ := letterboxdGetter.GetPopularMovies(10, 0, letterboxd.Week)
+	popularMovies, _ := letterboxdGetter.GetPopularMovies(100, 0, letterboxd.Week)
 
 	moviesStat, _ := letterboxdGetter.GetMovieStatsThreaded(popularMovies)
 	for movieId, movieStat := range moviesStat {

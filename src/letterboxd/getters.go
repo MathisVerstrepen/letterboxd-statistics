@@ -2,6 +2,7 @@ package letterboxd
 
 import (
 	"fmt"
+	"log"
 	"regexp"
 	"strconv"
 	"strings"
@@ -80,14 +81,14 @@ func (lg LetterboxdGetter) GetPopularMovies(n int, offset int, dateRange Range) 
 			Multiple:   true,
 		})
 
-		for i, posterNode := range posterNodes {
+		for _, posterNode := range posterNodes {
 			movieId := gosoup.GetAttribute(posterNode, "data-film-id")
 			movieSlug := gosoup.GetAttribute(posterNode, "data-film-slug")
 			movieLink := gosoup.GetAttribute(posterNode, "data-target-link")
 
 			fmt.Printf("Found id [%10s], name [%50s], link [%50s] \n", movieId, movieSlug, movieLink)
 
-			popMovies.Movies[i] = MovieMeta{
+			popMovies.Movies[nFetched] = MovieMeta{
 				Id:   movieId,
 				Slug: movieSlug,
 				Link: movieLink,
@@ -203,7 +204,10 @@ func (lg LetterboxdGetter) GetMovieStatsThreaded(movies *PopularMovies) (map[str
 		go func(movieId string, movieUrl string) {
 			defer wg.Done()
 
-			movieStat, _ := lg.GetMovieStats(movieUrl)
+			movieStat, err := lg.GetMovieStats(movieUrl)
+			if err != nil {
+				log.Default().Println(err)
+			}
 
 			mu.Lock()
 			moviesStat[movieId] = movieStat
