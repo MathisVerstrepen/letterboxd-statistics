@@ -9,3 +9,13 @@ services:
     volumes:
       - ./volumes/data:/data
     command: --loadmodule /usr/lib/redis/modules/redistimeseries.so
+
+  app:
+    build: .
+    container_name: app
+    depends_on:
+      - redis
+    entrypoint: "/app/entrypoint.sh"
+    environment:
+      REDIS_HOST: redis
+      REDIS_PORT: 6379

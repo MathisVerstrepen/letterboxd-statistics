@@ -4,7 +4,9 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"os"
 
+	"github.com/joho/godotenv"
 	"github.com/redis/go-redis/v9"
 )
 
@@ -26,14 +28,23 @@ const (
 func (db *DB) Init() {
 	ctx := context.Background()
 
+	err := godotenv.Load(".env")
+	if err != nil {
+		log.Println("[INIT] WARNING : Failed to load .env file")
+		log.Println(err)
+	}
+
+	fmt.Println(os.Getenv("REDIS_HOST"))
+	fmt.Println(os.Getenv("REDIS_PORT"))
 	db.Client = redis.NewClient(&redis.Options{
-		Addr:     "localhost:6379",
+		Addr:     fmt.Sprintf("%s:%s", os.Getenv("REDIS_HOST"), os.Getenv("REDIS_PORT")),
 		Password: "",
 		DB:       0,
 	})
 
 	res := db.Client.Conn().Ping(ctx)
 	if res.Err() != nil {
+		log.Default().Println("[INIT] fail to connect to redis")
 		log.Fatal(res.Err().Error())
 	}
 }
@@ -49,7 +60,7 @@ func (db *DB) tsIntegrity(tsName string) error {
 		if err != nil {
 			return err
 		}
-		fmt.Printf("[INIT] Created timeseries %s\n", tsName)
+		fmt.Printf("[REDIS] Created timeseries %s\n", tsName)
 	}
 
 	return nil
