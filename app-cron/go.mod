@@ -1,4 +1,4 @@
-module diikstra.fr/letterboxd-statistics
+module diikstra.fr/letterboxd-statistics/app-cron
 
 go 1.22.1
 

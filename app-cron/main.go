@@ -3,8 +3,8 @@ package main
 import (
 	"fmt"
 
-	"diikstra.fr/letterboxd-statistics/src/db"
-	"diikstra.fr/letterboxd-statistics/src/letterboxd"
+	"diikstra.fr/letterboxd-statistics/app-cron/src/db"
+	"diikstra.fr/letterboxd-statistics/app-cron/src/letterboxd"
 )
 
 func main() {
