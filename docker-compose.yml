@@ -19,3 +19,17 @@ services:
     environment:
       REDIS_HOST: redis
       REDIS_PORT: 6379
+
+  app-client:
+    build: ./app-client
+    container_name: letterboxd-stats-client
+    depends_on:
+      - redis
+    ports:
+      - "3000:3000"
+    environment:
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      ENV: prod
+      PORT: 3000
+      ASSETS_PATH: /root/assets/
