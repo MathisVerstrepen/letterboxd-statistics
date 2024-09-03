@@ -10,9 +10,9 @@ services:
       - ./volumes/data:/data
     command: --loadmodule /usr/lib/redis/modules/redistimeseries.so
 
-  app:
-    build: .
-    container_name: app
+  app-cron:
+    build: ./app-cron
+    container_name: letterboxd-stats-cron
     depends_on:
       - redis
     entrypoint: "/app/entrypoint.sh"
