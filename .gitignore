@@ -2,7 +2,7 @@ proxies.txt
 volumes/data/dump.rdb
 .env
 node_modules
-*/tmp
+tmp
 package-lock.json
 output.css
 *_templ.go

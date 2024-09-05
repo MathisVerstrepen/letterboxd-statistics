@@ -24,6 +24,9 @@ func main() {
 	// ---- Home Routes ---- //
 	e.GET("/", handlers.HomeHandler)
 
+	// ---- Movie Routes ---- //
+	e.GET("/movie/:id", handlers.MoviePageById)
+
 	// ---- Global Routes ---- //
 	e.GET("/ping", handlers.GlobalPing)
 	e.POST("/ping", handlers.GlobalPing)
