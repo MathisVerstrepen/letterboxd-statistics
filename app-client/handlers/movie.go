@@ -4,11 +4,11 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
-	"os/exec"
 	"strings"
 
 	"diikstra.fr/letterboxd-statistics/app-client/components"
 	"diikstra.fr/letterboxd-statistics/app-client/models"
+	"diikstra.fr/letterboxd-statistics/app-client/services"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/gommon/log"
 )
@@ -32,15 +32,15 @@ func MoviePageById(c echo.Context) error {
 	}
 	dataString := strings.Join(dataStrings, ";")
 
-	jsRenderer := "assets/graphs/renderHTML.js"
-	htmlToRender := "assets/graphs/d3.html"
-
-	fmt.Println(dataString)
-	lsCmd := exec.Command("phantomjs", jsRenderer, htmlToRender, dataString)
-	lsOut, err := lsCmd.Output()
+	chartEngine := services.Chart{
+		MovieId:      movieId,
+		RendererPath: "assets/graphs/renderHTML.js",
+		BaseHTMLPath: "assets/graphs/d3.html",
+	}
+	svg, err := chartEngine.GetSVG(dataString)
 	if err != nil {
 		return err
 	}
 
-	return Render(c, http.StatusOK, components.Root(components.Movie(string(lsOut)), "movie:"+movieId))
+	return Render(c, http.StatusOK, components.Root(components.Movie(svg), "movie:"+movieId))
 }

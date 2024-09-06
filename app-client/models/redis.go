@@ -68,3 +68,37 @@ func (rdb *DB) GetMovieFullRangeTS(ts string) ([]redis.TSTimestampValue, error) 
 
 	return res, nil
 }
+
+type CHART_KEYS string
+
+func (chartBase CHART_KEYS) Id(movieId string) string {
+	return fmt.Sprintf("%s:%s:chart", chartBase, movieId)
+}
+
+const (
+	CHART_WATCH CHART_KEYS = "movies:watchcount"
+	CHART_LIST  CHART_KEYS = "movies:listcount"
+	CHART_LIKE  CHART_KEYS = "movies:likecount"
+)
+
+// Chart caching
+func (rdb *DB) GetChartSVG(key string) (string, error) {
+	req := rdb.Client.Get(rdb.ctx, key)
+	res, err := req.Result()
+	if err != nil {
+		// in case of empty key, we just return an empty result but not raise the error
+		if err.Error() == "redis: nil" {
+			return "", nil
+		}
+		return "", err
+	}
+
+	return res, nil
+}
+
+func (rdb *DB) SetChartSVG(key string, svg string) error {
+	req := rdb.Client.Set(rdb.ctx, key, svg, time.Minute*5)
+	err := req.Err()
+
+	return err
+}
