@@ -42,7 +42,7 @@ func (db *DB) Init() {
 
 	db.Client = redis.NewClient(&redis.Options{
 		Addr:     fmt.Sprintf("%s:%s", os.Getenv("REDIS_HOST"), os.Getenv("REDIS_PORT")),
-		Password: "",
+		Password: os.Getenv("REDIS_PASSSWORD"),
 		DB:       0,
 	})
 
