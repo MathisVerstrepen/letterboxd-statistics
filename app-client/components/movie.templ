@@ -1,7 +1,32 @@
 package components
 
 templ Movie(svg string) {
-    <div class="flex items-center justify-center h-full w-full">
-        @templ.Raw(svg)
+    @templ.Raw(svg)
+}
+
+templ MovieWrapper(content templ.Component) {
+    <select name="metric" id="select-metric">
+        <option value="watchcount">Watch Count</option>
+        <option value="listcount">List Count</option>
+        <option value="likecount">Like Count</option>
+    </select>
+    <div class="flex items-center justify-center h-full w-full" id="movie-stat-graph">
+        @content
     </div>
+
+    <script>
+        const select = document.getElementById('select-metric');
+        select.addEventListener('change', (event) => {
+            const metric = event.target.value;
+            const movieId = window.location.pathname.split('/').pop();
+
+            htmx.ajax(
+                "GET",
+                `/movie/${movieId}/graph?metric=${metric}`,
+                {
+                    target : '#movie-stat-graph',
+                }
+            )
+        });
+    </script>
 }

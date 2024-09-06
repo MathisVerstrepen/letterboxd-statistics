@@ -30,12 +30,12 @@ func (chart Chart) renderSVG(data string) ([]byte, error) {
 	return lsOut, nil
 }
 
-func (chart Chart) GetSVG(data string, forceRender bool) (string, error) {
+func (chart Chart) GetSVG(data string, metric models.Metric, forceRender bool) (string, error) {
 	if data == "" {
 		return "", errors.New("data cannot be empty")
 	}
 
-	rdbKey := models.CHART_WATCH.Id(chart.MovieId)
+	rdbKey := metric.ChartKey(chart.MovieId)
 	cachedChartSvg, err := models.Rdb.GetChartSVG(rdbKey)
 	if err != nil {
 		log.Error(err)

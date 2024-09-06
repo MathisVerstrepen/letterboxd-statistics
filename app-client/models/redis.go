@@ -19,17 +19,21 @@ type DB struct {
 
 var Rdb DB
 
-type TS_NAME string
-
-func (tsBase TS_NAME) Id(movieId string) string {
-	return fmt.Sprintf("%s:%s", tsBase, movieId)
-}
+type Metric string
 
 const (
-	TS_WATCH TS_NAME = "movies:watchcount"
-	TS_LIST  TS_NAME = "movies:listcount"
-	TS_LIKE  TS_NAME = "movies:likecount"
+	WatchCount Metric = "watchcount"
+	ListCount  Metric = "listcount"
+	LikeCount  Metric = "likecount"
 )
+
+func (metric Metric) TsKey(movieId string) string {
+	return fmt.Sprintf("movies:%s:%s", metric, movieId)
+}
+
+func (metric Metric) ChartKey(movieId string) string {
+	return fmt.Sprintf("movies:%s:%s:chart", metric, movieId)
+}
 
 func (db *DB) Init() {
 	db.ctx = context.Background()
@@ -67,18 +71,6 @@ func (rdb *DB) GetMovieFullRangeTS(ts string) ([]redis.TSTimestampValue, error) 
 
 	return res, nil
 }
-
-type CHART_KEYS string
-
-func (chartBase CHART_KEYS) Id(movieId string) string {
-	return fmt.Sprintf("%s:%s:chart", chartBase, movieId)
-}
-
-const (
-	CHART_WATCH CHART_KEYS = "movies:watchcount"
-	CHART_LIST  CHART_KEYS = "movies:listcount"
-	CHART_LIKE  CHART_KEYS = "movies:likecount"
-)
 
 // Chart caching
 func (rdb *DB) GetChartSVG(key string) (string, error) {
