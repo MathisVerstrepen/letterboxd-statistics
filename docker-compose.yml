@@ -19,6 +19,7 @@ services:
     environment:
       REDIS_HOST: redis
       REDIS_PORT: 6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
 
   app-client:
     build: ./app-client
@@ -30,6 +31,7 @@ services:
     environment:
       REDIS_HOST: redis
       REDIS_PORT: 6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
       ENV: prod
       PORT: 3000
       ASSETS_PATH: /root/assets/
