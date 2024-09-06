@@ -3,9 +3,10 @@ package models
 import (
 	"context"
 	"fmt"
-	"log"
 	"os"
 	"time"
+
+	"github.com/labstack/gommon/log"
 
 	"github.com/joho/godotenv"
 	"github.com/redis/go-redis/v9"
@@ -35,12 +36,10 @@ func (db *DB) Init() {
 
 	err := godotenv.Load(".env")
 	if err != nil {
-		log.Println("[INIT] WARNING : Failed to load .env file")
-		log.Println(err)
+		log.Warn("[INIT] WARNING : Failed to load .env file")
+		log.Warn(err)
 	}
 
-	fmt.Println(os.Getenv("REDIS_HOST"))
-	fmt.Println(os.Getenv("REDIS_PORT"))
 	db.Client = redis.NewClient(&redis.Options{
 		Addr:     fmt.Sprintf("%s:%s", os.Getenv("REDIS_HOST"), os.Getenv("REDIS_PORT")),
 		Password: "",
@@ -49,7 +48,7 @@ func (db *DB) Init() {
 
 	res := db.Client.Conn().Ping(db.ctx)
 	if res.Err() != nil {
-		log.Default().Println("[INIT] fail to connect to redis")
+		log.Error("[INIT] fail to connect to redis")
 		log.Fatal(res.Err().Error())
 	}
 }
@@ -58,7 +57,7 @@ func (rdb *DB) GetMovieFullRangeTS(ts string) ([]redis.TSTimestampValue, error) 
 	fromTimestamp := 0
 	toTimestamp := time.Now().UnixMilli()
 
-	fmt.Printf("[REDIS] Getting %s from %d to %d\n", ts, fromTimestamp, toTimestamp)
+	log.Infof("[REDIS] Getting %s from %d to %d", ts, fromTimestamp, toTimestamp)
 
 	req := rdb.Client.TSRange(rdb.ctx, ts, fromTimestamp, int(toTimestamp))
 	res, err := req.Result()
