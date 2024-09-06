@@ -6,9 +6,9 @@ window.createChart = function (pointsRawData) {
     });
 
     // Declare the chart dimensions and margins.
-    var margin = { top: 10, right: 20, bottom: 50, left: 60 },
-        width = 1200 - margin.left - margin.right,
-        height = 800 - margin.top - margin.bottom;
+    var margin = { top: 10, right: 10, bottom: 50, left: 100 },
+        width = 1920 - margin.left - margin.right,
+        height = 1080 - margin.top - margin.bottom;
 
     // Append the SVG element to the container.
     const svg = d3
@@ -16,8 +16,10 @@ window.createChart = function (pointsRawData) {
         .append("svg")
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
+        .attr("viewBox", [0, 0, width + margin.left + margin.right, height + margin.top + margin.bottom])
+        .attr("style", "max-width: 90%; height: auto; max-height: 90%; height: intrinsic;")
         .append("g")
-        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
 
     // Define area and line gradient.
     var lg = svg
@@ -52,10 +54,11 @@ window.createChart = function (pointsRawData) {
     svg.append("g")
         .attr("class", "axisWhite")
         .attr("transform", "translate(0," + (height + 10) + ")")
+        .style("font-size", "0.5vw")
         .call(
             d3
                 .axisBottom(x)
-                .ticks(width / 100)
+                .ticks(10)
                 .tickSizeOuter(0)
         )
         .call(function (g) {
@@ -76,7 +79,8 @@ window.createChart = function (pointsRawData) {
     svg.append("g")
         .attr("class", "axisWhite")
         .attr("transform", "translate(-5,0)")
-        .call(d3.axisLeft(y).ticks(height / 80))
+        .style("font-size", "0.5vw")
+        .call(d3.axisLeft(y).ticks(15))
         .call(function (g) {
             return g.select(".domain").remove();
         })
@@ -86,7 +90,7 @@ window.createChart = function (pointsRawData) {
                 .selectAll(".tick line")
                 .clone()
                 .attr("x2", width)
-                .attr("stroke-opacity", 0.1);
+                .attr("stroke-opacity", 0.1)
         });
 
     // Declare the area generator.
@@ -121,6 +125,6 @@ window.createChart = function (pointsRawData) {
     svg.append("path")
         .attr("fill", "none")
         .attr("stroke", "url(#chartGradient)")
-        .attr("stroke-width", 3)
+        .attr("stroke-width", "0.2vw")
         .attr("d", line(aapl));
 };

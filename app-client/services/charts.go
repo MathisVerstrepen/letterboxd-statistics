@@ -30,7 +30,7 @@ func (chart Chart) renderSVG(data string) ([]byte, error) {
 	return lsOut, nil
 }
 
-func (chart Chart) GetSVG(data string) (string, error) {
+func (chart Chart) GetSVG(data string, forceRender bool) (string, error) {
 	if data == "" {
 		return "", errors.New("data cannot be empty")
 	}
@@ -42,7 +42,7 @@ func (chart Chart) GetSVG(data string) (string, error) {
 		return "", err
 	}
 
-	if cachedChartSvg == "" {
+	if cachedChartSvg == "" || forceRender {
 		chartSvg, err := chart.renderSVG(data)
 		if err != nil {
 			return "", err

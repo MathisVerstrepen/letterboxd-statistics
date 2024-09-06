@@ -27,7 +27,6 @@ func MoviePageById(c echo.Context) error {
 
 	dataStrings := make([]string, len(data))
 	for i, tsData := range data {
-		fmt.Printf("%20d - %20f\n", tsData.Timestamp, tsData.Value)
 		dataStrings[i] = fmt.Sprintf("%d:%f", tsData.Timestamp, tsData.Value)
 	}
 	dataString := strings.Join(dataStrings, ";")
@@ -37,7 +36,7 @@ func MoviePageById(c echo.Context) error {
 		RendererPath: "assets/graphs/renderHTML.js",
 		BaseHTMLPath: "assets/graphs/d3.html",
 	}
-	svg, err := chartEngine.GetSVG(dataString)
+	svg, err := chartEngine.GetSVG(dataString, true)
 	if err != nil {
 		return err
 	}
