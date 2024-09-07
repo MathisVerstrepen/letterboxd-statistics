@@ -1,8 +1,6 @@
 package main
 
 import (
-	"fmt"
-
 	"diikstra.fr/letterboxd-statistics/app-cron/src/db"
 	"diikstra.fr/letterboxd-statistics/app-cron/src/letterboxd"
 )
@@ -17,12 +15,12 @@ func main() {
 	letterboxdFetchers.AddFetchers(rawFetchers)
 
 	letterboxdGetter := letterboxd.LetterboxdGetter{Fetchers: letterboxdFetchers}
-	popularMovies, _ := letterboxdGetter.GetPopularMovies(100, 0, letterboxd.Week)
+	popularMovies, _ := letterboxdGetter.GetPopularMovies(10, 0, letterboxd.Week)
+	letterboxdGetter.SetMoviePosterThreaded(popularMovies)
+	letterboxdGetter.SetMovieBackdropThreaded(popularMovies)
 
 	moviesStat, _ := letterboxdGetter.GetMovieStatsThreaded(popularMovies)
 	for movieId, movieStat := range moviesStat {
-		fmt.Printf("[%10s] %+v\n", movieId, *movieStat)
-
 		rdb.TsAdd(db.TS_WATCH.Id(movieId), float64(movieStat.WatchCount))
 		rdb.TsAdd(db.TS_LIKE.Id(movieId), float64(movieStat.LikeCount))
 		rdb.TsAdd(db.TS_LIST.Id(movieId), float64(movieStat.ListCount))
