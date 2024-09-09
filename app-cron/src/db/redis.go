@@ -10,9 +10,12 @@ import (
 	"github.com/redis/go-redis/v9"
 )
 
-type DB struct {
+type RDB struct {
 	Client *redis.Client
 }
+
+var Rdb RDB = RDB{}
+
 type TS_NAME string
 
 func (tsBase TS_NAME) Id(movieId string) string {
@@ -25,7 +28,7 @@ const (
 	TS_LIKE  TS_NAME = "movies:likecount"
 )
 
-func (db *DB) Init() {
+func (db *RDB) Init() {
 	ctx := context.Background()
 
 	err := godotenv.Load(".env")
@@ -49,7 +52,7 @@ func (db *DB) Init() {
 
 // Check if a timeseries key name exist in redis db
 // if not, create it
-func (db *DB) tsIntegrity(tsName string) error {
+func (db *RDB) tsIntegrity(tsName string) error {
 	ctx := context.Background()
 
 	val, _ := db.Client.Exists(ctx, tsName).Result()
@@ -64,7 +67,7 @@ func (db *DB) tsIntegrity(tsName string) error {
 	return nil
 }
 
-func (db *DB) TsAdd(tsName string, value float64) error {
+func (db *RDB) TsAdd(tsName string, value float64) error {
 	ctx := context.Background()
 
 	err := db.tsIntegrity(tsName)

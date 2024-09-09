@@ -4,15 +4,32 @@ services:
   redis:
     image: redislabs/redistimeseries
     container_name: redis
+    restart: unless-stopped
     ports:
       - "6379:6379"
     volumes:
-      - ./volumes/data:/data
+      - ./volumes/redis:/data
     command: --loadmodule /usr/lib/redis/modules/redistimeseries.so --requirepass ${REDIS_PASSWORD}
+
+  postgres:
+    image: postgres:16.4-alpine3.20
+    container_name: letterboxd-stats-postgres
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./volumes/init.sql:/docker-entrypoint-initdb.d/init.sql
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    command: ["postgres", "-c", "log_statement=all"]
 
   app-cron:
     build: ./app-cron
     container_name: letterboxd-stats-cron
+    restart: unless-stopped
     depends_on:
       - redis
     entrypoint: "/app/entrypoint.sh"
@@ -24,6 +41,7 @@ services:
   app-client:
     build: ./app-client
     container_name: letterboxd-stats-client
+    restart: unless-stopped
     depends_on:
       - redis
     ports:
@@ -35,3 +53,6 @@ services:
       ENV: prod
       PORT: 3000
       ASSETS_PATH: /root/assets/
+
+volumes:
+  postgres_data:

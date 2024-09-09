@@ -47,6 +47,17 @@ type PopularMovies struct {
 	Offset int
 }
 
+type MovieIds []string
+
+func (moviesIds *MovieIds) Include(search string) bool {
+	for _, moviesId := range *moviesIds {
+		if moviesId == search {
+			return true
+		}
+	}
+	return false
+}
+
 func getPopularNode(staticFetcher Fetcher, dateRange Range, page int) (*html.Node, error) {
 	urlBasePopular := "films/ajax/popular"
 
@@ -290,12 +301,16 @@ func (lg LetterboxdGetter) GetMoviePoster(movieSlug string) (string, error) {
 	return posterUrl, nil
 }
 
-func (lg LetterboxdGetter) SetMoviePosterThreaded(movies *PopularMovies) error {
+func (lg LetterboxdGetter) SetMoviePosterThreaded(movies *PopularMovies, dbMovieIds *MovieIds) error {
 	sem := make(chan struct{}, 10) // au max, 10 coroutines en même temps
 	var mu sync.Mutex              // pour protéger l'accès à movies
 	var wg sync.WaitGroup          // pour attendre toutes les coroutines même après sortie de boucle
 
 	for idx, movie := range movies.Movies {
+		if dbMovieIds.Include(movie.Id) {
+			continue
+		}
+
 		wg.Add(1)
 		sem <- struct{}{}
 
@@ -354,12 +369,16 @@ func (lg LetterboxdGetter) GetMovieBackdrop(movieUrl string) (string, error) {
 	return backdropUrl, nil
 }
 
-func (lg LetterboxdGetter) SetMovieBackdropThreaded(movies *PopularMovies) error {
+func (lg LetterboxdGetter) SetMovieBackdropThreaded(movies *PopularMovies, dbMovieIds *MovieIds) error {
 	sem := make(chan struct{}, 10) // au max, 10 coroutines en même temps
 	var mu sync.Mutex              // pour protéger l'accès à movies
 	var wg sync.WaitGroup          // pour attendre toutes les coroutines même après sortie de boucle
 
 	for idx, movie := range movies.Movies {
+		if dbMovieIds.Include(movie.Id) {
+			continue
+		}
+
 		wg.Add(1)
 		sem <- struct{}{}
 

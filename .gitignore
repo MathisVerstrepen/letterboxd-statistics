@@ -1,5 +1,5 @@
 proxies.txt
-volumes/data/dump.rdb
+volumes/redis/dump.rdb
 .env
 node_modules
 tmp
