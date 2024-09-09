@@ -39,9 +39,20 @@ templ layout(contents templ.Component, title string) {
             <script>
                 const socket = new WebSocket(`ws://${window.location.hostname}:9456/ws`);
 
+                // if page leave is detected, stop trying to reconnect
+                window.addEventListener("beforeunload", () => {
+                    socket.close();
+                });
+
                 socket.addEventListener("close", (event) => {
+                    // if the connection was closed normally, don't try to reconnect
+                    if (event.code === 1000) {
+                        return;
+                    }
+
+                    console.warn("Connection closed, trying to reconnect...");
                     let interval = setInterval(() => {
-                        fetch("/").then((response) => {
+                        fetch("/ping").then((response) => {
                             if (response.ok) {
                                 console.log("Connection closed, but ping fetched successfully!");
                                 clearInterval(interval);
