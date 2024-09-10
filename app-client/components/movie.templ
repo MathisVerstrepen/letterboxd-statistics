@@ -38,11 +38,15 @@ templ MovieWrapper(content templ.Component, movieInfo *models.MovieMeta) {
                     ★ { fmt.Sprintf("%.2f", movieInfo.Rating) }
                 </p>
 
-                <select name="metric" id="select-metric" class="z-20">
-                    <option value="watchcount">Watch Count</option>
-                    <option value="listcount">List Count</option>
-                    <option value="likecount">Like Count</option>
-                </select>
+                <div class="z-20 w-full px-4 bg-black bg-opacity-10 rounded-xl border-2 border-white border-opacity-10">
+                    <select name="metric" id="select-metric" 
+                    class="w-full py-2 bg-transparent text-white">
+                        <option value="watchcount">Watch Count</option>
+                        <option value="listcount">List Count</option>
+                        <option value="likecount">Like Count</option>
+                    </select>                
+                </div>
+
             </div>        
         </div>
 
