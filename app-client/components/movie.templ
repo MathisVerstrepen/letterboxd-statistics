@@ -1,17 +1,47 @@
 package components
 
+import "diikstra.fr/letterboxd-statistics/app-client/models"
+
 templ Movie(svg string) {
     @templ.Raw(svg)
 }
 
-templ MovieWrapper(content templ.Component) {
-    <select name="metric" id="select-metric">
-        <option value="watchcount">Watch Count</option>
-        <option value="listcount">List Count</option>
-        <option value="likecount">Like Count</option>
-    </select>
-    <div class="flex items-center justify-center h-full w-full" id="movie-stat-graph">
-        @content
+templ MovieWrapper(content templ.Component, movieInfo *models.MovieMeta) {
+    <div class="grid grid-cols-[20%_80%] items-center justify-items-center justify-center h-full w-full relative">
+        <div class="absolute h-fit w-full top-0 left-0 z-0">
+            <img src={ movieInfo.Backdrop } class="h-full w-full object-contain"
+                alt={ movieInfo.Title } loading="lazy"
+            >
+        </div>
+
+        <div class="absolute h-full w-full top-0 left-0 z-10 
+        bg-gradient-to-t from-[#14181c] via-[#14181c] via-30% to-[#14181cc5]"></div>
+
+        <div class="z-20 w-72 h-fit relative bg-white bg-opacity-5 backdrop-blur-md
+            overflow-hidden rounded-3xl">
+            <div class="z-0 absolute top-0 left-0 h-full w-full opacity-50">
+                <img src={ movieInfo.Poster } class="w-full h-full blur-2xl"
+                    alt={ movieInfo.Title } loading="lazy">
+            </div>
+
+            <div class="p-8 rounded-3xl flex flex-col items-center space-y-4 
+                border-2 border-white border-opacity-10">
+                <p class="z-20 text-white text-center font-bold text-xl"> { movieInfo.Title } </p>
+
+                <img src={ movieInfo.Poster } class="z-20 w-full rounded-xl shadow-lg"
+                    alt={ movieInfo.Title } loading="lazy">
+
+                <select name="metric" id="select-metric" class="z-20">
+                    <option value="watchcount">Watch Count</option>
+                    <option value="listcount">List Count</option>
+                    <option value="likecount">Like Count</option>
+                </select>
+            </div>        
+        </div>
+
+        <div class="z-20 pr-[5%]" id="movie-stat-graph">
+            @content
+        </div>
     </div>
 
     <script>

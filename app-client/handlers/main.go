@@ -23,6 +23,7 @@ func Init() {
 	fmt.Printf("[INIT] Env : %s\n", os.Getenv("ENV"))
 
 	models.Rdb.Init()
+	models.Pdb.Init()
 
 	fmt.Println("[INIT] Startup sequence done.")
 }

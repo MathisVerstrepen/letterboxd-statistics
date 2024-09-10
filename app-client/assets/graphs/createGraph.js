@@ -17,7 +17,7 @@ window.createChart = function (pointsRawData) {
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
         .attr("viewBox", [0, 0, width + margin.left + margin.right, height + margin.top + margin.bottom])
-        .attr("style", "max-width: 90%; height: auto; max-height: 90%; height: intrinsic;")
+        .attr("style", "max-width: 100%; height: auto; max-height: 100%; height: intrinsic;")
         .append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
 

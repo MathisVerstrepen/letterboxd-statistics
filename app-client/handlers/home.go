@@ -8,5 +8,5 @@ import (
 )
 
 func HomeHandler(c echo.Context) error {
-	return Render(c, http.StatusOK, components.Root(components.Home(), "Home"))
+	return Render(c, http.StatusOK, components.Root(components.Home(), "Home", 0))
 }

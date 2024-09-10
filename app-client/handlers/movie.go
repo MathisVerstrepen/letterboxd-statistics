@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
+	"time"
 
 	"diikstra.fr/letterboxd-statistics/app-client/components"
 	"diikstra.fr/letterboxd-statistics/app-client/models"
@@ -41,6 +42,8 @@ func getGraphComp(movieId string, movieMetric models.Metric) (templ.Component, e
 }
 
 func MoviePageById(c echo.Context) error {
+	st := time.Now()
+
 	movieId := c.Param("id")
 	if movieId == "" {
 		return errors.New("id can't be null")
@@ -56,13 +59,20 @@ func MoviePageById(c echo.Context) error {
 		movieMetric = models.WatchCount
 	}
 
+	movieInfo, err := models.Pdb.GetMovieInfos(movieId)
+	if err != nil {
+		return err
+	}
+
 	graphComp, err := getGraphComp(movieId, movieMetric)
 	if err != nil {
 		return err
 	}
 
 	return Render(c, http.StatusOK,
-		components.Root(components.MovieWrapper(graphComp), "movie:"+movieId),
+		components.Root(components.MovieWrapper(graphComp, movieInfo), "movie:"+movieId,
+			float64(time.Since(st).Seconds()),
+		),
 	)
 }
 
