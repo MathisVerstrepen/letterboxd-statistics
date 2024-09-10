@@ -1,4 +1,16 @@
-window.createChart = function (pointsRawData) {
+
+getChartName = function (metric) {
+    switch (metric) {
+        case "watchcount":
+            return "Watch Count over Time";
+        case "listcount":
+            return "List Count over Time";
+        case "likecount":
+            return "Like Count over Time";
+    }
+};
+
+window.createChart = function (pointsRawData, metricName) {
     // Parse the raw data into an array of objects.
     aapl = pointsRawData.split(";").map(function (point) {
         var xy = point.split(":").map(Number);
@@ -6,7 +18,7 @@ window.createChart = function (pointsRawData) {
     });
 
     // Declare the chart dimensions and margins.
-    var margin = { top: 10, right: 10, bottom: 50, left: 100 },
+    var margin = { top: 100, right: 10, bottom: 50, left: 100 },
         width = 1920 - margin.left - margin.right,
         height = 1080 - margin.top - margin.bottom;
 
@@ -127,4 +139,11 @@ window.createChart = function (pointsRawData) {
         .attr("stroke", "url(#chartGradient)")
         .attr("stroke-width", "0.2vw")
         .attr("d", line(aapl));
+
+    svg.append('text')
+        .attr('class', 'chart-title')
+        .attr('x', width / 2)
+        .attr('y', - margin.top / 2)
+        .attr('text-anchor', 'middle')
+        .text(getChartName(metricName));
 };

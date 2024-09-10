@@ -15,10 +15,10 @@ type Chart struct {
 	BaseHTMLPath string
 }
 
-func (chart Chart) renderSVG(data string) ([]byte, error) {
+func (chart Chart) renderSVG(data string, metric models.Metric) ([]byte, error) {
 	st := time.Now()
 
-	lsCmd := exec.Command("phantomjs", chart.RendererPath, chart.BaseHTMLPath, data)
+	lsCmd := exec.Command("phantomjs", chart.RendererPath, chart.BaseHTMLPath, data, string(metric))
 	lsOut, err := lsCmd.Output()
 	if err != nil {
 		log.Error(err)
@@ -43,7 +43,7 @@ func (chart Chart) GetSVG(data string, metric models.Metric, forceRender bool) (
 	}
 
 	if cachedChartSvg == "" || forceRender {
-		chartSvg, err := chart.renderSVG(data)
+		chartSvg, err := chart.renderSVG(data, metric)
 		if err != nil {
 			return "", err
 		}
