@@ -1,6 +1,9 @@
 package components
 
-import "diikstra.fr/letterboxd-statistics/app-client/models"
+import (
+    "diikstra.fr/letterboxd-statistics/app-client/models" 
+    "fmt"
+)
 
 templ Movie(svg string) {
     @templ.Raw(svg)
@@ -30,6 +33,10 @@ templ MovieWrapper(content templ.Component, movieInfo *models.MovieMeta) {
 
                 <img src={ movieInfo.Poster } class="z-20 w-full rounded-xl shadow-lg"
                     alt={ movieInfo.Title } loading="lazy">
+
+                <p class="z-20 text-white text-center font-bold text-xl">
+                    ★ { fmt.Sprintf("%.2f", movieInfo.Rating) }
+                </p>
 
                 <select name="metric" id="select-metric" class="z-20">
                     <option value="watchcount">Watch Count</option>
