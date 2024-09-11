@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/labstack/gommon/log"
@@ -92,4 +93,14 @@ func (rdb *DB) SetChartSVG(key string, svg string) error {
 	err := req.Err()
 
 	return err
+}
+
+func (rdb *DB) GetPopularityOrder() ([]string, error) {
+	req := rdb.Client.Get(rdb.ctx, "popularityOrder:week")
+	res, err := req.Result()
+	if err != nil {
+		return nil, err
+	}
+
+	return strings.Split(res, ":"), nil
 }

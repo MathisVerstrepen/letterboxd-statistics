@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 
+	"github.com/lib/pq"
 	_ "github.com/lib/pq"
 )
 
@@ -56,4 +57,31 @@ func (pdb *PDB) GetMovieInfos(movieId string) (*MovieMeta, error) {
 	}
 
 	return movieMeta, nil
+}
+
+func (pdb *PDB) GetMoviesInfos(movieIds []string) ([]MovieMeta, error) {
+	stmt := `
+		SELECT id, slug, link, title, rating, popularity, poster, backdrop FROM movies
+		WHERE id = ANY($1)
+	`
+	rows, err := pdb.Client.Query(stmt, pq.Array(movieIds))
+	if err != nil {
+		return nil, err
+	}
+
+	moviesMeta := make([]MovieMeta, len(movieIds))
+	i := 0
+
+	for rows.Next() {
+		movieMeta := MovieMeta{}
+		err := rows.Scan(&movieMeta.Id, &movieMeta.Slug, &movieMeta.Link, &movieMeta.Title, &movieMeta.Rating, &movieMeta.Popularity, &movieMeta.Poster, &movieMeta.Backdrop)
+		if err != nil {
+			return nil, err
+		}
+
+		moviesMeta[i] = movieMeta
+		i++
+	}
+
+	return moviesMeta, nil
 }

@@ -1,7 +1,15 @@
 package components
 
-templ Home() {
-  <div class="h-full w-full">
-    <h1>Hello World !</h1>
-  </div>
+import "diikstra.fr/letterboxd-statistics/app-client/models"
+
+templ Home(moviesMeta []models.MovieMeta) {
+<div class="h-full w-full text-white p-8 overflow-y-scroll">
+    for _, movieMeta := range moviesMeta {
+        <a class="flex flex-row"
+            href={ templ.SafeURL("/movie/" + movieMeta.Id) }
+        >
+            <h2>{movieMeta.Title}</h2>
+        </a>
+    }
+</div>
 }
