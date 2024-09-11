@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 
+	"diikstra.fr/letterboxd-statistics/app-cron/src/letterboxd"
 	"github.com/joho/godotenv"
 	"github.com/redis/go-redis/v9"
 )
@@ -16,17 +17,17 @@ type RDB struct {
 
 var Rdb RDB = RDB{}
 
-type TS_NAME string
-
-func (tsBase TS_NAME) Id(movieId string) string {
-	return fmt.Sprintf("%s:%s", tsBase, movieId)
-}
+type Metric string
 
 const (
-	TS_WATCH TS_NAME = "movies:watchcount"
-	TS_LIST  TS_NAME = "movies:listcount"
-	TS_LIKE  TS_NAME = "movies:likecount"
+	WatchCount Metric = "watchcount"
+	ListCount  Metric = "listcount"
+	LikeCount  Metric = "likecount"
 )
+
+func (metric Metric) TsKey(movieId string) string {
+	return fmt.Sprintf("movies:%s:%s", metric, movieId)
+}
 
 func (db *RDB) Init() {
 	ctx := context.Background()
@@ -76,6 +77,22 @@ func (db *RDB) TsAdd(tsName string, value float64) error {
 	}
 
 	_, err = db.Client.TSAdd(ctx, string(tsName), "*", value).Result()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (db *RDB) SetPopularityOrder(moviesMeta []letterboxd.MovieMeta) error {
+	orderString := ""
+	for _, movieMeta := range moviesMeta {
+		orderString += movieMeta.Id + ":"
+	}
+	orderString = orderString[0 : len(orderString)-1]
+
+	ctx := context.Background()
+	err := db.Client.Set(ctx, "popularityOrder:week", orderString, 0).Err()
 	if err != nil {
 		return err
 	}
