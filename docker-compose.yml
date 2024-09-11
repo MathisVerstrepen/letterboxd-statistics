@@ -16,7 +16,7 @@ services:
     container_name: letterboxd-stats-postgres
     restart: unless-stopped
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./volumes/init.sql:/docker-entrypoint-initdb.d/init.sql
@@ -32,11 +32,17 @@ services:
     restart: unless-stopped
     depends_on:
       - redis
+      - postgres
     entrypoint: "/app/entrypoint.sh"
     environment:
       REDIS_HOST: redis
       REDIS_PORT: 6379
       REDIS_PASSWORD: ${REDIS_PASSWORD}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_HOST: ${POSTGRES_HOST}
+      POSTGRES_PORT: ${POSTGRES_PORT}
 
   app-client:
     build: ./app-client
@@ -44,12 +50,18 @@ services:
     restart: unless-stopped
     depends_on:
       - redis
+      - postgres
     ports:
-      - "3000:3000"
+      - "9456:3000"
     environment:
       REDIS_HOST: redis
       REDIS_PORT: 6379
       REDIS_PASSWORD: ${REDIS_PASSWORD}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_HOST: ${POSTGRES_HOST}
+      POSTGRES_PORT: ${POSTGRES_PORT}
       ENV: prod
       PORT: 3000
       ASSETS_PATH: /root/assets/
