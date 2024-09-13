@@ -1,15 +1,41 @@
 package components
 
-import "diikstra.fr/letterboxd-statistics/app-client/models"
+import (
+    "diikstra.fr/letterboxd-statistics/app-client/models"
+    "fmt"
+)
 
 templ Home(moviesMeta []models.MovieMeta) {
-<div class="h-full w-full text-white p-8 overflow-y-scroll">
-    for _, movieMeta := range moviesMeta {
-        <a class="flex flex-row"
-            href={ templ.SafeURL("/movie/" + movieMeta.Id) }
-        >
-            <h2>{movieMeta.Title}</h2>
-        </a>
+<div class="flex flex-col h-full pb-10">
+    if moviesMeta[0].Backdrop != "" {
+        <div class="absolute h-fit w-full top-0 left-0 z-0">
+            
+                <img src={ moviesMeta[0].Backdrop } class="h-full w-full object-contain"
+                    alt={ moviesMeta[0].Title } loading="lazy"
+                >
+        </div>
+
+        <div class="absolute h-full w-full top-0 left-0 z-10 
+        bg-gradient-to-t from-[#14181c] via-[#14181c] via-30% to-[#14181cc5]"></div>
     }
+
+    <h1 class="z-20 my-10 text-center font-bold text-3xl text-white">Letterboxd Popular Movies</h1>
+    <div class="z-20 w-[90%] max-h-full m-auto grid grid-cols-5 grid-flow-row-dense overflow-y-scroll scrollbar-hidden">
+        for idx, movieMeta := range moviesMeta {
+            <a class="flex flex-row p-2 m-2 rounded-2xl
+                bg-gradient-to-t from-[#ffffff18] via-transparent to-transparent
+                hover:from-[#ffffff18] hover:via-[#ffffff18] hover:to-[#ffffff18]"
+                href={ templ.SafeURL("/movie/" + movieMeta.Id) }
+            >
+                <img src={ movieMeta.Poster } class="rounded-xl shadow-lg h-28"
+                    alt={ movieMeta.Title } loading="lazy">
+                <div class="py-2 pl-4 flex flex-col justify-between content-between h-full w-full">
+                    <p class="font-bold text-white opacity-50 ">{fmt.Sprintf("%d", idx + 1)}</p>
+                    <h2 class="font-bold text-white">{movieMeta.Title}</h2>                
+                </div>
+
+            </a>
+        }
+    </div>
 </div>
 }

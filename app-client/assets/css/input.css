@@ -27,3 +27,12 @@ body {
     font-weight: 700;
     fill: rgba(255, 255, 255, 0.75);
 }
+
+.scrollbar-hidden::-webkit-scrollbar {
+    display: none;
+}
+
+.scrollbar-hidden {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
