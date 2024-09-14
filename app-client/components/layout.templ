@@ -75,7 +75,7 @@ templ layout(contents templ.Component, title string, renderTime float64) {
             @Svg()
 
             <footer class="z-50 absolute text-center text-white text-xs p-4 bottom-0 right-1/2 translate-x-1/2 opacity-30">
-                <p>Served in { fmt.Sprintf("%.2f", renderTime) } sec</p>
+                <p>Served in { fmt.Sprintf("%.3f", renderTime) } sec</p>
             </footer>
 		</body>
 	</html>
