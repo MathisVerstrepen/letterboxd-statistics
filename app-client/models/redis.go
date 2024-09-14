@@ -21,19 +21,34 @@ type DB struct {
 var Rdb DB
 
 type Metric string
+type DateRange string
 
 const (
-	WatchCount Metric = "watchcount"
-	ListCount  Metric = "listcount"
-	LikeCount  Metric = "likecount"
+	WatchCount Metric    = "watchcount"
+	ListCount  Metric    = "listcount"
+	LikeCount  Metric    = "likecount"
+	LastDay    DateRange = "d"
+	LastWeek   DateRange = "w"
+	LastMonth  DateRange = "m"
 )
+
+func (dateRange DateRange) getUnixTimestamp() int64 {
+	timenow := time.Now()
+	if dateRange == "d" {
+		return timenow.Add(-1 * 24 * time.Hour).UnixMilli()
+	}
+	if dateRange == "w" {
+		return timenow.Add(-1 * 7 * 24 * time.Hour).UnixMilli()
+	}
+	return timenow.Add(-1 * 30 * 7 * 24 * time.Hour).UnixMilli()
+}
 
 func (metric Metric) TsKey(movieId string) string {
 	return fmt.Sprintf("movies:%s:%s", metric, movieId)
 }
 
-func (metric Metric) ChartKey(movieId string) string {
-	return fmt.Sprintf("movies:%s:%s:chart", metric, movieId)
+func ChartKey(movieId string, metric Metric, dateRange DateRange) string {
+	return fmt.Sprintf("movies:%s:%s:%s:chart", metric, movieId, dateRange)
 }
 
 func (db *DB) Init() {
@@ -58,13 +73,13 @@ func (db *DB) Init() {
 	}
 }
 
-func (rdb *DB) GetMovieFullRangeTS(ts string) ([]redis.TSTimestampValue, error) {
-	fromTimestamp := 0
+func (rdb *DB) GetMovieFullRangeTS(ts string, dateRange DateRange) ([]redis.TSTimestampValue, error) {
+	fromTimestamp := dateRange.getUnixTimestamp()
 	toTimestamp := time.Now().UnixMilli()
 
 	log.Infof("[REDIS] Getting %s from %d to %d", ts, fromTimestamp, toTimestamp)
 
-	req := rdb.Client.TSRange(rdb.ctx, ts, fromTimestamp, int(toTimestamp))
+	req := rdb.Client.TSRange(rdb.ctx, ts, int(fromTimestamp), int(toTimestamp))
 	res, err := req.Result()
 	if err != nil {
 		return nil, err

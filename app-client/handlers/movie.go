@@ -15,8 +15,8 @@ import (
 	"github.com/labstack/gommon/log"
 )
 
-func getGraphComp(movieId string, movieMetric models.Metric) (templ.Component, error) {
-	data, err := models.Rdb.GetMovieFullRangeTS(movieMetric.TsKey(movieId))
+func getGraphComp(movieId string, movieMetric models.Metric, dateRange models.DateRange) (templ.Component, error) {
+	data, err := models.Rdb.GetMovieFullRangeTS(movieMetric.TsKey(movieId), dateRange)
 	if err != nil {
 		log.Error(err)
 		return nil, err
@@ -33,12 +33,38 @@ func getGraphComp(movieId string, movieMetric models.Metric) (templ.Component, e
 		RendererPath: "assets/graphs/renderHTML.js",
 		BaseHTMLPath: "assets/graphs/d3.html",
 	}
-	svg, err := chartEngine.GetSVG(dataString, movieMetric, false)
+	svg, err := chartEngine.GetSVG(dataString, movieMetric, dateRange, false)
 	if err != nil {
 		return nil, err
 	}
 
 	return components.Movie(svg), nil
+}
+
+func parseMetric(movieMetricInput string) models.Metric {
+	var movieMetric models.Metric
+	if movieMetricInput == "listcount" {
+		movieMetric = models.ListCount
+	} else if movieMetricInput == "likecount" {
+		movieMetric = models.LikeCount
+	} else {
+		movieMetric = models.WatchCount
+	}
+
+	return movieMetric
+}
+
+func parseDateRange(dateRangeInput string) models.DateRange {
+	var dateRange models.DateRange
+	if dateRangeInput == "day" {
+		dateRange = models.LastDay
+	} else if dateRangeInput == "month" {
+		dateRange = models.LastMonth
+	} else {
+		dateRange = models.LastWeek
+	}
+
+	return dateRange
 }
 
 func MoviePageById(c echo.Context) error {
@@ -49,22 +75,15 @@ func MoviePageById(c echo.Context) error {
 		return errors.New("id can't be null")
 	}
 
-	movieMetricInput := c.QueryParam("metric")
-	var movieMetric models.Metric
-	if movieMetricInput == "listcount" {
-		movieMetric = models.ListCount
-	} else if movieMetricInput == "likecount" {
-		movieMetric = models.LikeCount
-	} else {
-		movieMetric = models.WatchCount
-	}
+	movieMetric := parseMetric(c.QueryParam("metric"))
+	dateRange := parseDateRange(c.QueryParam("range"))
 
 	movieInfo, err := models.Pdb.GetMovieInfos(movieId)
 	if err != nil {
 		return err
 	}
 
-	graphComp, err := getGraphComp(movieId, movieMetric)
+	graphComp, err := getGraphComp(movieId, movieMetric, dateRange)
 	if err != nil {
 		return err
 	}
@@ -83,19 +102,16 @@ func GraphById(c echo.Context) error {
 	}
 
 	movieMetricInput := c.QueryParam("metric")
-	var movieMetric models.Metric
-	if movieMetricInput == "listcount" {
-		movieMetric = models.ListCount
-	} else if movieMetricInput == "likecount" {
-		movieMetric = models.LikeCount
-	} else {
-		movieMetric = models.WatchCount
-	}
+	movieMetric := parseMetric(movieMetricInput)
+	dateRangeInput := c.QueryParam("range")
+	dateRange := parseDateRange(dateRangeInput)
 
-	graphComp, err := getGraphComp(movieId, movieMetric)
+	graphComp, err := getGraphComp(movieId, movieMetric, dateRange)
 	if err != nil {
 		return err
 	}
+
+	c.Response().Header().Set("HX-Push-Url", fmt.Sprintf("/movie/%s?metric=%s&range=%s", movieId, movieMetricInput, dateRangeInput))
 
 	return Render(c, http.StatusOK, graphComp)
 }

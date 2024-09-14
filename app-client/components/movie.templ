@@ -41,12 +41,20 @@ templ MovieWrapper(content templ.Component, movieInfo *models.MovieMeta) {
                 <div class="z-20 w-full px-4 bg-black bg-opacity-10 rounded-xl border-2 border-white border-opacity-10">
                     <select name="metric" id="select-metric" 
                     class="w-full py-2 bg-transparent text-white">
-                        <option value="watchcount">Watch Count</option>
+                        <option value="watchcount" selected="selected">Watch Count</option>
                         <option value="listcount">List Count</option>
                         <option value="likecount">Like Count</option>
                     </select>                
                 </div>
 
+                <div class="z-20 w-full px-4 bg-black bg-opacity-10 rounded-xl border-2 border-white border-opacity-10">
+                    <select name="range" id="select-range" 
+                    class="w-full py-2 bg-transparent text-white">
+                        <option value="day">Last Day</option>
+                        <option value="week" selected="selected">Last Week</option>
+                        <option value="month">Last Month</option>
+                    </select>                
+                </div>
             </div>        
         </div>
 
@@ -56,14 +64,28 @@ templ MovieWrapper(content templ.Component, movieInfo *models.MovieMeta) {
     </div>
 
     <script>
-        const select = document.getElementById('select-metric');
-        select.addEventListener('change', (event) => {
-            const metric = event.target.value;
-            const movieId = window.location.pathname.split('/').pop();
+        const movieId = window.location.pathname.split('/').pop();
+        var metric = "watchcount";
+        var range = "week";
 
+        const metricNode = document.getElementById('select-metric');
+        metricNode.addEventListener('change', (event) => {
+            metric = event.target.value;
             htmx.ajax(
                 "GET",
-                `/movie/${movieId}/graph?metric=${metric}`,
+                `/movie/${movieId}/graph?metric=${metric}&range=${range}`,
+                {
+                    target : '#movie-stat-graph',
+                }
+            )
+        });
+
+        const rangeNode = document.getElementById('select-range');
+        rangeNode.addEventListener('change', (event) => {
+            range = event.target.value;
+            htmx.ajax(
+                "GET",
+                `/movie/${movieId}/graph?metric=${metric}&range=${range}`,
                 {
                     target : '#movie-stat-graph',
                 }
