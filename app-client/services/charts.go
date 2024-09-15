@@ -3,6 +3,8 @@ package services
 import (
 	"errors"
 	"os/exec"
+	"regexp"
+	"strconv"
 	"time"
 
 	"diikstra.fr/letterboxd-statistics/app-client/models"
@@ -30,6 +32,18 @@ func (chart Chart) renderSVG(data string, metric models.Metric) ([]byte, error) 
 	return lsOut, nil
 }
 
+func optimizeSVG(chartSvg *string) {
+	re := regexp.MustCompile(`-?\d+\.\d+`)
+
+	*chartSvg = re.ReplaceAllStringFunc(*chartSvg, func(match string) string {
+		f, err := strconv.ParseFloat(match, 64)
+		if err != nil {
+			return match
+		}
+		return strconv.FormatFloat(f, 'f', 1, 64)
+	})
+}
+
 func (chart Chart) GetSVG(data string, metric models.Metric, dateRange models.DateRange, forceRender bool) (string, error) {
 	if data == "" {
 		return "", errors.New("data cannot be empty")
@@ -43,19 +57,22 @@ func (chart Chart) GetSVG(data string, metric models.Metric, dateRange models.Da
 	}
 
 	if cachedChartSvg == "" || forceRender {
-		chartSvg, err := chart.renderSVG(data, metric)
+		chartSvgBytes, err := chart.renderSVG(data, metric)
 		if err != nil {
 			return "", err
 		}
 
-		err = models.Rdb.SetChartSVG(rdbKey, string(chartSvg))
+		chartSvg := string(chartSvgBytes)
+		optimizeSVG(&chartSvg)
+
+		err = models.Rdb.SetChartSVG(rdbKey, &chartSvg)
 		if err != nil {
 			log.Error(err)
 			return "", err
 		}
 
 		log.Info("[CHART] Chart served from rendering")
-		return string(chartSvg), nil
+		return chartSvg, nil
 	}
 
 	log.Info("[CHART] Chart served from cache")

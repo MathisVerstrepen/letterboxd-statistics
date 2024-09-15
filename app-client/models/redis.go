@@ -103,8 +103,8 @@ func (rdb *DB) GetChartSVG(key string) (string, error) {
 	return res, nil
 }
 
-func (rdb *DB) SetChartSVG(key string, svg string) error {
-	req := rdb.Client.Set(rdb.ctx, key, svg, time.Minute*5)
+func (rdb *DB) SetChartSVG(key string, svg *string) error {
+	req := rdb.Client.Set(rdb.ctx, key, *svg, time.Minute*5)
 	err := req.Err()
 
 	return err
