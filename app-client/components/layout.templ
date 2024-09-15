@@ -39,8 +39,10 @@ templ layout(contents templ.Component, title string, renderTime float64) {
             <script src="/assets/htmx.min.js"></script>
 
 			if (environment() != "prod") {
+            @templ.JSONScript("port", os.Getenv("PORT"))
             <script>
-                const socket = new WebSocket(`ws://${window.location.hostname}:9456/ws`);
+                const port = JSON.parse(document.getElementById('port').textContent);
+                const socket = new WebSocket(`ws://${window.location.hostname}:${port}/ws`);
 
                 // if page leave is detected, stop trying to reconnect
                 window.addEventListener("beforeunload", () => {
