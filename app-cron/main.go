@@ -30,6 +30,10 @@ func main() {
 
 	moviesStat, _ := letterboxdGetter.GetMovieStatsThreaded(popularMovies)
 	for movieId, movieStat := range moviesStat {
+		if movieStat == nil {
+			continue
+		}
+
 		db.Rdb.TsAdd(db.WatchCount.TsKey(movieId), float64(movieStat.WatchCount))
 		db.Rdb.TsAdd(db.ListCount.TsKey(movieId), float64(movieStat.ListCount))
 		db.Rdb.TsAdd(db.LikeCount.TsKey(movieId), float64(movieStat.LikeCount))
