@@ -52,7 +52,7 @@ services:
       - redis
       - postgres
     ports:
-      - "9456:3000"
+      - "9998:3000"
     environment:
       REDIS_HOST: redis
       REDIS_PORT: 6379
