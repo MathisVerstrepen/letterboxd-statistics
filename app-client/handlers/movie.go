@@ -15,8 +15,8 @@ import (
 	"github.com/labstack/gommon/log"
 )
 
-func getGraphComp(movieId string, movieMetric models.Metric, dateRange models.DateRange) (templ.Component, error) {
-	data, err := models.Rdb.GetMovieFullRangeTS(movieMetric.TsKey(movieId), dateRange)
+func getGraphComp(movieId string, movieMetric models.Metric, graphDateRange models.DateRange, letterboxdDateRange string) (templ.Component, error) {
+	data, err := models.Rdb.GetMovieFullRangeTS(movieMetric.TsKey(movieId, letterboxdDateRange), graphDateRange)
 	if err != nil {
 		log.Error(err)
 		return nil, err
@@ -33,7 +33,7 @@ func getGraphComp(movieId string, movieMetric models.Metric, dateRange models.Da
 		RendererPath: "assets/graphs/renderHTML.js",
 		BaseHTMLPath: "assets/graphs/d3.html",
 	}
-	svg, err := chartEngine.GetSVG(dataString, movieMetric, dateRange, false)
+	svg, err := chartEngine.GetSVG(dataString, movieMetric, graphDateRange, false)
 	if err != nil {
 		return nil, err
 	}
@@ -83,7 +83,7 @@ func MoviePageById(c echo.Context) error {
 		return err
 	}
 
-	graphComp, err := getGraphComp(movieId, movieMetric, dateRange)
+	graphComp, err := getGraphComp(movieId, movieMetric, dateRange, "w")
 	if err != nil {
 		return err
 	}
@@ -106,7 +106,7 @@ func GraphById(c echo.Context) error {
 	dateRangeInput := c.QueryParam("range")
 	dateRange := parseDateRange(dateRangeInput)
 
-	graphComp, err := getGraphComp(movieId, movieMetric, dateRange)
+	graphComp, err := getGraphComp(movieId, movieMetric, dateRange, "w")
 	if err != nil {
 		return err
 	}

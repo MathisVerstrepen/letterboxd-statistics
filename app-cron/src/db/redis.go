@@ -25,8 +25,30 @@ const (
 	LikeCount  Metric = "likecount"
 )
 
-func (metric Metric) TsKey(movieId string) string {
-	return fmt.Sprintf("movies:%s:%s", metric, movieId)
+type DateRange string
+
+const (
+	Week  DateRange = "w"
+	Month DateRange = "m"
+	Year  DateRange = "y"
+	All   DateRange = "a"
+)
+
+func (dateRange DateRange) GetUrlDateRange() string {
+	switch dateRange {
+	case Week:
+		return "this/week"
+	case Month:
+		return "this/month"
+	case Year:
+		return "this/year"
+	default:
+		return ""
+	}
+}
+
+func (metric Metric) TsKey(movieId string, dateRange DateRange) string {
+	return fmt.Sprintf("movies:%s:%s:%s", metric, movieId, dateRange)
 }
 
 func (db *RDB) Init() {
@@ -84,7 +106,7 @@ func (db *RDB) TsAdd(tsName string, value float64) error {
 	return nil
 }
 
-func (db *RDB) SetPopularityOrder(moviesMeta []letterboxd.MovieMeta) error {
+func (db *RDB) SetPopularityOrder(moviesMeta []letterboxd.MovieMeta, dateRange DateRange) error {
 	orderString := ""
 	for _, movieMeta := range moviesMeta {
 		orderString += movieMeta.Id + ":"
@@ -92,7 +114,7 @@ func (db *RDB) SetPopularityOrder(moviesMeta []letterboxd.MovieMeta) error {
 	orderString = orderString[0 : len(orderString)-1]
 
 	ctx := context.Background()
-	err := db.Client.Set(ctx, "popularityOrder:week", orderString, 0).Err()
+	err := db.Client.Set(ctx, fmt.Sprintf("popularityOrder:%s", dateRange), orderString, 0).Err()
 	if err != nil {
 		return err
 	}

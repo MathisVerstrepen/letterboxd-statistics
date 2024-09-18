@@ -22,15 +22,6 @@ type LetterboxdGetter struct {
 	Fetchers Fetchers
 }
 
-type Range string
-
-const (
-	Week  Range = "this/week"
-	Month Range = "this/month"
-	Year  Range = "this/year"
-	All   Range = ""
-)
-
 type MovieMeta struct {
 	Id       string
 	Slug     string
@@ -58,7 +49,7 @@ func (moviesIds *MovieIds) Include(search string) bool {
 	return false
 }
 
-func getPopularNode(staticFetcher Fetcher, dateRange Range, page int) (*html.Node, error) {
+func getPopularNode(staticFetcher Fetcher, dateRange string, page int) (*html.Node, error) {
 	urlBasePopular := "films/ajax/popular"
 
 	resBytes, err := staticFetcher.FetchData(webfetch.FetcherParams{
@@ -82,7 +73,7 @@ func getPopularNode(staticFetcher Fetcher, dateRange Range, page int) (*html.Nod
 	return htmlBody, nil
 }
 
-func (lg LetterboxdGetter) GetPopularMovies(n int, offset int, dateRange Range) (*PopularMovies, error) {
+func (lg LetterboxdGetter) GetPopularMovies(n int, offset int, dateRange string) (*PopularMovies, error) {
 	// TODO implement offset
 
 	page := 1

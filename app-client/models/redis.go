@@ -43,8 +43,8 @@ func (dateRange DateRange) getUnixTimestamp() int64 {
 	return timenow.Add(-1 * 30 * 7 * 24 * time.Hour).UnixMilli()
 }
 
-func (metric Metric) TsKey(movieId string) string {
-	return fmt.Sprintf("movies:%s:%s", metric, movieId)
+func (metric Metric) TsKey(movieId string, letterboxdDateRange string) string {
+	return fmt.Sprintf("movies:%s:%s:%s", metric, movieId, letterboxdDateRange)
 }
 
 func ChartKey(movieId string, metric Metric, dateRange DateRange) string {
@@ -110,8 +110,8 @@ func (rdb *DB) SetChartSVG(key string, svg *string) error {
 	return err
 }
 
-func (rdb *DB) GetPopularityOrder() ([]string, error) {
-	req := rdb.Client.Get(rdb.ctx, "popularityOrder:week")
+func (rdb *DB) GetPopularityOrder(dateRange string) ([]string, error) {
+	req := rdb.Client.Get(rdb.ctx, fmt.Sprintf("popularityOrder:%s", dateRange))
 	res, err := req.Result()
 	if err != nil {
 		return nil, err

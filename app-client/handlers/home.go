@@ -30,7 +30,7 @@ func (sorter popOrderSorter) cmp(a, b models.MovieMeta) int {
 func HomeHandler(c echo.Context) error {
 	st := time.Now()
 
-	popularityOrder, err := models.Rdb.GetPopularityOrder()
+	popularityOrder, err := models.Rdb.GetPopularityOrder("w")
 	if err != nil {
 		return err
 	}
