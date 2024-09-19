@@ -22,7 +22,9 @@ templ Home(moviesMeta []models.MovieMeta, selectedRange models.LetterboxdDateRan
         @rangeSelector(selectedRange)
     </div>
 
-    <div class="z-20 w-[90%] max-h-full m-auto grid grid-cols-5 grid-flow-row-dense overflow-y-scroll scrollbar-hidden">
+    <div class="z-20 w-[90%] max-h-full m-auto grid 
+        grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 
+        grid-flow-row-dense overflow-y-scroll scrollbar-hidden">
         for idx, movieMeta := range moviesMeta {
             <a class="flex flex-row p-2 m-2 rounded-2xl
                 bg-gradient-to-t from-[#ffffff18] via-transparent to-transparent
