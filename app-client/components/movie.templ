@@ -11,14 +11,8 @@ templ Movie(svg string) {
 
 templ MovieWrapper(content templ.Component, movieInfo *models.MovieMeta) {
     <div class="grid grid-cols-[20%_80%] items-center justify-items-center justify-center h-full w-full relative">
-        <div class="absolute h-fit w-full top-0 left-0 z-0">
-            <img src={ movieInfo.Backdrop } class="h-full w-full object-contain"
-                alt={ movieInfo.Title } loading="lazy"
-            >
-        </div>
-
-        <div class="absolute h-full w-full top-0 left-0 z-10 
-        bg-gradient-to-t from-[#14181c] via-[#14181c] via-30% to-[#14181cc5]"></div>
+        @imageBackground(movieInfo.Backdrop, movieInfo.Title)
+        @backHomeButton()
 
         <div class="z-20 w-72 h-fit relative bg-white bg-opacity-5 backdrop-blur-md
             overflow-hidden rounded-3xl">
@@ -92,4 +86,24 @@ templ MovieWrapper(content templ.Component, movieInfo *models.MovieMeta) {
             )
         });
     </script>
+}
+
+templ imageBackground(backdropUrl string, title string) {
+    <div class="absolute h-fit w-full top-0 left-0 z-0">
+        <img src={ backdropUrl } class="h-full w-full object-contain"
+            alt={ title } loading="lazy"
+        >
+    </div>
+
+    <div class="absolute h-full w-full top-0 left-0 z-10 
+        bg-gradient-to-t from-[#14181c] via-[#14181c] via-30% to-[#14181cc5]"></div>
+}
+
+templ backHomeButton() {
+    <a href="/" 
+        class="absolute top-5 left-5 z-20 flex space-x-2 items-center m-4 p-2 rounded-xl 
+            opacity-50 hover:opacity-100 duration-200">
+        @UseIcon("back", "white", "medium")
+        <p class="text-white">Home</p>
+    </a>
 }
