@@ -22,14 +22,19 @@ var Rdb DB
 
 type Metric string
 type DateRange string
+type LetterboxdDateRange string
 
 const (
-	WatchCount Metric    = "watchcount"
-	ListCount  Metric    = "listcount"
-	LikeCount  Metric    = "likecount"
-	LastDay    DateRange = "d"
-	LastWeek   DateRange = "w"
-	LastMonth  DateRange = "m"
+	WatchCount          Metric              = "watchcount"
+	ListCount           Metric              = "listcount"
+	LikeCount           Metric              = "likecount"
+	LastDay             DateRange           = "d"
+	LastWeek            DateRange           = "w"
+	LastMonth           DateRange           = "m"
+	LetterboxdLastWeek  LetterboxdDateRange = "w"
+	LetterboxdLastMonth LetterboxdDateRange = "m"
+	LetterboxdLastYear  LetterboxdDateRange = "y"
+	LetterboxdLastAll   LetterboxdDateRange = "a"
 )
 
 func (dateRange DateRange) getUnixTimestamp() int64 {
@@ -41,6 +46,21 @@ func (dateRange DateRange) getUnixTimestamp() int64 {
 		return timenow.Add(-1 * 7 * 24 * time.Hour).UnixMilli()
 	}
 	return timenow.Add(-1 * 30 * 7 * 24 * time.Hour).UnixMilli()
+}
+
+func StringToLetterboxdDateRange(rawDateRange string) LetterboxdDateRange {
+	switch rawDateRange {
+	case "week":
+		return "w"
+	case "month":
+		return "m"
+	case "year":
+		return "y"
+	case "all":
+		return "a"
+	default:
+		return "w"
+	}
 }
 
 func (metric Metric) TsKey(movieId string, letterboxdDateRange string) string {
@@ -110,7 +130,7 @@ func (rdb *DB) SetChartSVG(key string, svg *string) error {
 	return err
 }
 
-func (rdb *DB) GetPopularityOrder(dateRange string) ([]string, error) {
+func (rdb *DB) GetPopularityOrder(dateRange LetterboxdDateRange) ([]string, error) {
 	req := rdb.Client.Get(rdb.ctx, fmt.Sprintf("popularityOrder:%s", dateRange))
 	res, err := req.Result()
 	if err != nil {

@@ -30,7 +30,10 @@ func (sorter popOrderSorter) cmp(a, b models.MovieMeta) int {
 func HomeHandler(c echo.Context) error {
 	st := time.Now()
 
-	popularityOrder, err := models.Rdb.GetPopularityOrder("w")
+	rawDateRangeInput := c.QueryParam("range")
+	dateRangeInput := models.StringToLetterboxdDateRange(rawDateRangeInput)
+
+	popularityOrder, err := models.Rdb.GetPopularityOrder(dateRangeInput)
 	if err != nil {
 		return err
 	}
@@ -45,5 +48,6 @@ func HomeHandler(c echo.Context) error {
 	}
 	slices.SortFunc(moviesMeta, sorter.cmp)
 
-	return Render(c, http.StatusOK, components.Root(components.Home(moviesMeta), "Home", float64(time.Since(st).Seconds())))
+	homeComp := components.Home(moviesMeta, dateRangeInput)
+	return Render(c, http.StatusOK, components.Root(homeComp, "Home", float64(time.Since(st).Seconds())))
 }

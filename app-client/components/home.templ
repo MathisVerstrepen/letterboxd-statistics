@@ -5,21 +5,23 @@ import (
     "fmt"
 )
 
-templ Home(moviesMeta []models.MovieMeta) {
+templ Home(moviesMeta []models.MovieMeta, selectedRange models.LetterboxdDateRange) {
 <div class="flex flex-col h-full pb-10">
     if moviesMeta[0].Backdrop != "" {
         <div class="absolute h-fit w-full top-0 left-0 z-0">
-            
-                <img src={ moviesMeta[0].Backdrop } class="h-full w-full object-contain"
-                    alt={ moviesMeta[0].Title } loading="lazy"
-                >
+            <img src={ moviesMeta[0].Backdrop } class="h-full w-full object-contain"
+                alt={ moviesMeta[0].Title } loading="lazy">
         </div>
 
         <div class="absolute h-full w-full top-0 left-0 z-10 
         bg-gradient-to-t from-[#14181c] via-[#14181c] via-30% to-[#14181cc5]"></div>
     }
 
-    <h1 class="z-20 my-10 text-center font-bold text-3xl text-white">Letterboxd Popular Movies</h1>
+    <div class="z-20 w-full flex flex-col my-10">
+        <h1 class="text-center font-bold text-3xl text-white">Letterboxd Popular Movies</h1>
+        @rangeSelector(selectedRange)
+    </div>
+
     <div class="z-20 w-[90%] max-h-full m-auto grid grid-cols-5 grid-flow-row-dense overflow-y-scroll scrollbar-hidden">
         for idx, movieMeta := range moviesMeta {
             <a class="flex flex-row p-2 m-2 rounded-2xl
@@ -38,4 +40,30 @@ templ Home(moviesMeta []models.MovieMeta) {
         }
     </div>
 </div>
+}
+
+templ rangeSelector(selectedRange models.LetterboxdDateRange) {
+<div class="w-fit mx-auto mt-4 flex flex-row space-x-1 justify-center items-center rounded-2xl overflow-hidden
+    p-1 bg-white bg-opacity-10
+    border-2 border-white border-opacity-10 backdrop-blur-xl">
+    @rangeSelectorButton("Week", "/?range=week", selectedRange == models.LetterboxdLastWeek)
+    @rangeSelectorButton("Month", "/?range=month", selectedRange == models.LetterboxdLastMonth)
+    @rangeSelectorButton("Year", "/?range=year", selectedRange == models.LetterboxdLastYear)
+    @rangeSelectorButton("All", "/?range=all", selectedRange == models.LetterboxdLastAll)
+</div>
+}
+
+func getSelectedClass(selected bool) string {
+    if selected {
+        return "bg-black bg-opacity-40"
+    }
+    return ""
+}
+
+templ rangeSelectorButton(text string, url string, selected bool) {
+    <a class={"p-2 rounded-xl w-28 text-white text-center hover:bg-black hover:bg-opacity-20",
+        getSelectedClass(selected)}
+        href={ templ.SafeURL(url) }>
+        {text}
+    </a>
 }
