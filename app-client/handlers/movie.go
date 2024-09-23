@@ -33,7 +33,7 @@ func getGraphComp(movieId string, movieMetric models.Metric, graphDateRange mode
 		RendererPath: "assets/graphs/renderHTML.js",
 		BaseHTMLPath: "assets/graphs/d3.html",
 	}
-	svg, err := chartEngine.GetSVG(dataString, movieMetric, graphDateRange, false)
+	svg, err := chartEngine.GetSVG(dataString, movieMetric, graphDateRange, true)
 	if err != nil {
 		return nil, err
 	}
@@ -78,7 +78,7 @@ func MoviePageById(c echo.Context) error {
 	movieMetric := parseMetric(c.QueryParam("metric"))
 	dateRange := parseDateRange(c.QueryParam("range"))
 
-	movieInfo, err := models.Pdb.GetMovieInfos(movieId)
+	movieInfoDto, err := services.GetMovieInfos(movieId, dateRange)
 	if err != nil {
 		return err
 	}
@@ -89,7 +89,7 @@ func MoviePageById(c echo.Context) error {
 	}
 
 	return Render(c, http.StatusOK,
-		components.Root(components.MovieWrapper(graphComp, movieInfo), "movie:"+movieId,
+		components.Root(components.MovieWrapper(graphComp, movieInfoDto), "movie:"+movieId,
 			float64(time.Since(st).Seconds()),
 		),
 	)

@@ -48,6 +48,19 @@ func (dateRange DateRange) getUnixTimestamp() int64 {
 	return timenow.Add(-1 * 30 * 7 * 24 * time.Hour).UnixMilli()
 }
 
+func (dateRange DateRange) ToRaw() string {
+	switch dateRange {
+	case LastDay:
+		return "day"
+	case LastWeek:
+		return "week"
+	case LastMonth:
+		return "month"
+	}
+
+	return ""
+}
+
 func StringToLetterboxdDateRange(rawDateRange string) LetterboxdDateRange {
 	switch rawDateRange {
 	case "week":
@@ -103,6 +116,18 @@ func (rdb *DB) GetMovieFullRangeTS(ts string, dateRange DateRange) ([]redis.TSTi
 	res, err := req.Result()
 	if err != nil {
 		return nil, err
+	}
+
+	return res, nil
+}
+
+func (rdb *DB) GetMovieLastTS(ts string) (redis.TSTimestampValue, error) {
+	log.Infof("[REDIS] Getting latest %s", ts)
+
+	req := rdb.Client.TSGet(rdb.ctx, ts)
+	res, err := req.Result()
+	if err != nil {
+		return redis.TSTimestampValue{}, err
 	}
 
 	return res, nil
