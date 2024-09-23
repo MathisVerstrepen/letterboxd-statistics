@@ -19,8 +19,8 @@ window.createChart = function (pointsRawData, metricName) {
 
     // Declare the chart dimensions and margins.
     var margin = { top: 100, right: 10, bottom: 50, left: 100 },
-        width = 1920 - margin.left - margin.right,
-        height = 1080 - margin.top - margin.bottom;
+        width = 1500 - margin.left - margin.right,
+        height = 800 - margin.top - margin.bottom;
 
     // Append the SVG element to the container.
     const svg = d3
@@ -29,7 +29,7 @@ window.createChart = function (pointsRawData, metricName) {
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
         .attr("viewBox", [0, 0, width + margin.left + margin.right, height + margin.top + margin.bottom])
-        .attr("style", "max-width: 100%; height: auto; max-height: 100%; height: intrinsic;")
+        .attr("style", "width: 100%; max-width: 100%; height:auto; max-height: 100%;")
         .append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
 
@@ -66,7 +66,7 @@ window.createChart = function (pointsRawData, metricName) {
     svg.append("g")
         .attr("class", "axisWhite")
         .attr("transform", "translate(0," + (height + 10) + ")")
-        .style("font-size", "0.5vw")
+        .style("font-size", "12px")
         .call(
             d3
                 .axisBottom(x)
@@ -91,7 +91,7 @@ window.createChart = function (pointsRawData, metricName) {
     svg.append("g")
         .attr("class", "axisWhite")
         .attr("transform", "translate(-5,0)")
-        .style("font-size", "0.5vw")
+        .style("font-size", "12px")
         .call(d3.axisLeft(y).ticks(15))
         .call(function (g) {
             return g.select(".domain").remove();

@@ -10,49 +10,14 @@ templ Movie(svg string) {
 }
 
 templ MovieWrapper(content templ.Component, movieInfo *models.MovieMeta) {
-    <div class="grid grid-cols-[20%_80%] items-center justify-items-center justify-center h-full w-full relative">
+    <div class="grid grid-cols-[360px_auto] grid-rows-[85%_15%] h-full w-full relative">
         @imageBackground(movieInfo.Backdrop, movieInfo.Title)
         @backHomeButton()
+        @movieInfoCard(movieInfo)
+        @movieInfoBar(movieInfo)
 
-        <div class="z-20 w-72 h-fit relative bg-white bg-opacity-5 backdrop-blur-md
-            overflow-hidden rounded-3xl">
-            <div class="z-0 absolute top-0 left-0 h-full w-full opacity-50">
-                <img src={ movieInfo.Poster } class="w-full h-full blur-2xl"
-                    alt={ movieInfo.Title } loading="lazy">
-            </div>
-
-            <div class="p-8 rounded-3xl flex flex-col items-center space-y-4 
-                border-2 border-white border-opacity-10">
-                <p class="z-20 text-white text-center font-bold text-xl"> { movieInfo.Title } </p>
-
-                <img src={ movieInfo.Poster } class="z-20 w-full rounded-xl shadow-lg"
-                    alt={ movieInfo.Title } loading="lazy">
-
-                <p class="z-20 text-white text-center font-bold text-xl">
-                    ★ { fmt.Sprintf("%.2f", movieInfo.Rating) }
-                </p>
-
-                <div class="z-20 w-full px-4 bg-black bg-opacity-10 rounded-xl border-2 border-white border-opacity-10">
-                    <select name="metric" id="select-metric" 
-                    class="w-full py-2 bg-transparent text-white">
-                        <option value="watchcount" selected="selected">Watch Count</option>
-                        <option value="listcount">List Count</option>
-                        <option value="likecount">Like Count</option>
-                    </select>                
-                </div>
-
-                <div class="z-20 w-full px-4 bg-black bg-opacity-10 rounded-xl border-2 border-white border-opacity-10">
-                    <select name="range" id="select-range" 
-                    class="w-full py-2 bg-transparent text-white">
-                        <option value="day">Last Day</option>
-                        <option value="week" selected="selected">Last Week</option>
-                        <option value="month">Last Month</option>
-                    </select>                
-                </div>
-            </div>        
-        </div>
-
-        <div class="z-20 pr-[5%]" id="movie-stat-graph">
+        <div class="z-20 self-end justify-self-start h-full w-full flex justify-start items-end pb-4 pt-16 pl-6 pr-[5%]"
+            id="movie-stat-graph">
             @content
         </div>
     </div>
@@ -106,4 +71,102 @@ templ backHomeButton() {
         @UseIcon("back", "white", "medium")
         <p class="text-white">Home</p>
     </a>
+}
+
+templ movieInfoCard(movieInfo *models.MovieMeta) {
+    <div class="flex flex-col justify-end items-end">
+        <div class="z-20 w-72 mb-8 h-fit relative bg-white bg-opacity-5 backdrop-blur-md
+            overflow-hidden rounded-3xl">
+            <div class="z-0 absolute top-0 left-0 h-full w-full opacity-50">
+                <img src={ movieInfo.Poster } class="w-full h-full blur-2xl"
+                    alt={ movieInfo.Title } loading="lazy">
+            </div>
+
+            <div class="p-8 rounded-3xl flex flex-col items-center space-y-4 
+                border-2 border-white border-opacity-10">
+                <p class="z-20 text-white text-center font-bold text-xl"> { movieInfo.Title } </p>
+
+                <img src={ movieInfo.Poster } class="z-20 w-full rounded-xl shadow-lg"
+                    alt={ movieInfo.Title } loading="lazy">
+
+                <p class="z-20 text-white text-center font-bold text-xl">
+                    ★ { fmt.Sprintf("%.2f", movieInfo.Rating) }
+                </p>
+
+                <div class="z-20 w-full px-4 bg-black bg-opacity-10 rounded-xl border-2 border-white border-opacity-10">
+                    <select name="metric" id="select-metric" 
+                    class="w-full py-2 bg-transparent text-white">
+                        <option value="watchcount" selected="selected">Watch Count</option>
+                        <option value="listcount">List Count</option>
+                        <option value="likecount">Like Count</option>
+                    </select>                
+                </div>
+
+                <div class="z-20 w-full px-4 bg-black bg-opacity-10 rounded-xl border-2 border-white border-opacity-10">
+                    <select name="range" id="select-range" 
+                    class="w-full py-2 bg-transparent text-white">
+                        <option value="day">Last Day</option>
+                        <option value="week" selected="selected">Last Week</option>
+                        <option value="month">Last Month</option>
+                    </select>                
+                </div>
+            </div>        
+        </div>
+
+        @infoBarTopLeft()
+    </div>
+}
+
+templ movieInfoBar(movieInfo *models.MovieMeta) {
+    @infoBarBottomLeft()
+    @infoBarBottomRight(movieInfo)
+}
+
+templ infoBarTopLeft() {
+    <div class="z-20 w-72 h-[11.5rem] ml-20 rounded-t-3xl bg-white bg-opacity-5 backdrop-blur-md flex-shrink-0">
+        <div class="p-8 rounded-t-3xl border-2 border-white border-opacity-10 border-b-0 h-full"></div>
+    </div>
+}
+
+templ infoBarBottomLeft() {
+    <div class="z-20 relative w-72 rounded-bl-3xl h-4/5 min-h-32 bg-white bg-opacity-5 backdrop-blur-md row-start-2 justify-self-end">
+        <div class="z-20 relative h-full p-8 rounded-bl-3xl border-l-2 border-b-2 border-white border-opacity-10"></div>
+    </div>
+}
+
+templ infoBarBottomRight(movieInfo *models.MovieMeta) {
+    <div class="z-20 relative w-[95%] rounded-r-3xl h-4/5 min-h-32 bg-white bg-opacity-5 backdrop-blur-md
+    row-start-2">
+        @infoBarImageBackdrop(movieInfo.Poster, movieInfo.Title)
+
+        <div class="z-20 absolute bottom-6 -left-64 h-[calc(100%+11.5rem-3rem)] w-56 backdrop-blur bg-black bg-opacity-30 rounded-2xl">
+            <p class="text-white">TEST</p>
+        </div>
+
+        <div class="h-full w-full p-6 rounded-r-3xl border-2 border-l-0 border-white border-opacity-10
+            flex justify-between">
+            @statBox()
+            @statBox()
+            @statBox()
+        </div>
+    </div>
+}
+
+templ infoBarImageBackdrop(poster string, title string) {
+    <div class="z-0 absolute bottom-full -left-72 w-72 h-[11.5rem] rounded-t-3xl overflow-hidden">
+        <div class="absolute left-0 top-0 h-full w-[95vw]">
+            <img src={ poster } class="w-full h-full blur-2xl object-fill scale-y-[-1] opacity-30"
+                alt={ title } loading="lazy">
+        </div>
+    </div>
+    <div class="z-0 absolute right-0 bottom-0 h-full w-[calc(100%+18rem)] rounded-r-3xl rounded-bl-3xl overflow-hidden">
+        <img src={ poster } class="w-full h-full blur-2xl object-fill opacity-30"
+            alt={ title } loading="lazy">
+    </div>
+}
+
+templ statBox() {
+    <div class="z-20 backdrop-blur bg-black bg-opacity-30 w-[30%] rounded-2xl">
+        <p class="text-white">TEST</p>
+    </div>
 }
