@@ -11,7 +11,6 @@ function getChartName(metric) {
 
 function getTickConfig(timeRange) {
     var hours = timeRange / (1000 * 60 * 60);
-    console.log(hours);
 
     if (hours <= 24) {
         return {
