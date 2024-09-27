@@ -16,7 +16,7 @@ import (
 )
 
 func getGraphComp(movieId string, movieMetric models.Metric, graphDateRange models.DateRange, letterboxdDateRange string) (templ.Component, error) {
-	data, err := models.Rdb.GetMovieFullRangeTS(movieMetric.TsKey(movieId, letterboxdDateRange), graphDateRange)
+	data, err := models.Rdb.GetMovieFullRangeTS(movieMetric.TsKey(movieId), graphDateRange)
 	if err != nil {
 		log.Error(err)
 		return nil, err

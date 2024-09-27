@@ -24,7 +24,7 @@ func GetMovieInfos(movieId string, dateRange models.DateRange) (*dto.MovieInfoDT
 
 func getViewStat(movieId string, dateRange models.DateRange) (*dto.MovieViewDTO, error) {
 	movieViewDto := dto.MovieViewDTO{}
-	tsKey := models.WatchCount.TsKey(movieId, "w")
+	tsKey := models.WatchCount.TsKey(movieId)
 
 	lastMovieTs, err := models.Rdb.GetMovieLastTS(tsKey)
 	if err != nil {

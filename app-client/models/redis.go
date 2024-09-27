@@ -76,8 +76,8 @@ func StringToLetterboxdDateRange(rawDateRange string) LetterboxdDateRange {
 	}
 }
 
-func (metric Metric) TsKey(movieId string, letterboxdDateRange string) string {
-	return fmt.Sprintf("movies:%s:%s:%s", metric, movieId, letterboxdDateRange)
+func (metric Metric) TsKey(movieId string) string {
+	return fmt.Sprintf("movies:%s:%s", metric, movieId)
 }
 
 func ChartKey(movieId string, metric Metric, dateRange DateRange) string {
@@ -109,14 +109,20 @@ func (db *DB) Init() {
 func (rdb *DB) GetMovieFullRangeTS(ts string, dateRange DateRange) ([]redis.TSTimestampValue, error) {
 	fromTimestamp := dateRange.getUnixTimestamp()
 	toTimestamp := time.Now().UnixMilli()
+	numberOfPoints := int64(1000)
+	aggregationAvg := int((toTimestamp - fromTimestamp) / numberOfPoints)
 
 	log.Infof("[REDIS] Getting %s from %d to %d", ts, fromTimestamp, toTimestamp)
 
-	req := rdb.Client.TSRange(rdb.ctx, ts, int(fromTimestamp), int(toTimestamp))
+	req := rdb.Client.TSRangeWithArgs(rdb.ctx, ts, int(fromTimestamp), int(toTimestamp), &redis.TSRangeOptions{
+		Aggregator:     redis.Avg,
+		BucketDuration: aggregationAvg,
+	})
 	res, err := req.Result()
 	if err != nil {
 		return nil, err
 	}
+	fmt.Println(len(res))
 
 	return res, nil
 }
