@@ -122,7 +122,6 @@ func (rdb *DB) GetMovieFullRangeTS(ts string, dateRange DateRange) ([]redis.TSTi
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println(len(res))
 
 	return res, nil
 }

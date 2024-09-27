@@ -143,7 +143,7 @@ templ infoBarBottomRight(movieInfoDto *dto.MovieInfoDTO) {
         @infoBarImageBackdrop(movieInfoDto.MovieInfoDb.Poster, movieInfoDto.MovieInfoDb.Title)
 
         <div class="z-20 absolute bottom-6 -left-64 h-[calc(100%+11.5rem-3rem)] w-56 backdrop-blur bg-black bg-opacity-30 rounded-2xl">
-            <p class="text-white">TEST</p>
+            <p class="text-white opacity-80 font-bold text-xl text-center mt-6">Not available</p>
         </div>
 
         <div class="h-full w-full p-6 rounded-r-3xl border-2 border-l-0 border-white border-opacity-10
@@ -193,12 +193,9 @@ templ statBoxView(movieViewDto *dto.MovieViewDTO) {
 }
 
 templ statBoxWeekView() {
-    <div class="h-12 w-12 opacity-50">
-        @UseIcon("chart-line", "#00e054", "auto")
-    </div>
-    <p>YO2</p>
+    <p class="text-white opacity-80 font-bold text-xl ml-4">Not available</p>
 }
 
 templ statBoxOther() {
-    YO3
+    <p class="text-white opacity-80 font-bold text-xl ml-4">Not available</p>
 }
