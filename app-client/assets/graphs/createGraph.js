@@ -1,5 +1,4 @@
-
-getChartName = function (metric) {
+function getChartName(metric) {
     switch (metric) {
         case "watchcount":
             return "Watch Count over Time";
@@ -10,7 +9,41 @@ getChartName = function (metric) {
     }
 };
 
-window.createChart = function (pointsRawData, metricName) {
+function getTickConfig(timeRange) {
+    var hours = timeRange / (1000 * 60 * 60);
+    console.log(hours);
+
+    if (hours <= 24) {
+        return {
+            interval: d3.timeHour.every(2),
+            format: d3.timeFormat("%H:%M")
+        };
+    } else if (hours <= 24 * 7) {
+        return {
+            interval: d3.timeDay.every(1),
+            format: d3.timeFormat("%d %b")
+        };
+    } else {
+        return {
+            interval: d3.timeDay.every(2),
+            format: d3.timeFormat("%d %b")
+        };
+    }
+};
+
+function getDateRange(dateRange) {
+    date = new Date();
+    switch (dateRange) {
+        case "d":
+            return [date.setDate(date.getDate() - 1), new Date()];
+        case "w":
+            return [date.setDate(date.getDate() - 7), new Date()];
+        case "m":
+            return [date.setDate(date.getDate() - 30), new Date()];
+    }
+}
+
+window.createChart = function (pointsRawData, metricName, dateRangeStr) {
     // Parse the raw data into an array of objects.
     aapl = pointsRawData.split(";").map(function (point) {
         var xy = point.split(":").map(Number);
@@ -53,27 +86,22 @@ window.createChart = function (pointsRawData, metricName) {
         .style("stop-color", "#40BCF4")
         .style("stop-opacity", 1);
 
-    // Declare the x (horizontal position) scale.
-    const x = d3.scaleUtc(
-        // d3.extent returns the minimum and maximum value in the given array using natural order.
-        d3.extent(aapl, function (d) {
-            return d.date;
-        }),
-        [0, width]
-    );
+    dateRange = getDateRange(dateRangeStr)
+    var x = d3.scaleUtc(dateRange, [0, width]);
+    
+    var tickConfig = getTickConfig(dateRange[1] - dateRange[0]);
 
-    // Add the x-axis.
     svg.append("g")
         .attr("class", "axisWhite")
         .attr("transform", "translate(0," + (height + 10) + ")")
         .style("font-size", "12px")
         .call(
-            d3
-                .axisBottom(x)
-                .ticks(10)
+            d3.axisBottom(x)
+                .ticks(tickConfig.interval)
+                .tickFormat(tickConfig.format)
                 .tickSizeOuter(0)
         )
-        .call(function (g) {
+        .call(function(g) {
             return g.select(".domain").remove();
         });
 
