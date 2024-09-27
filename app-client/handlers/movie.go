@@ -89,7 +89,7 @@ func MoviePageById(c echo.Context) error {
 	}
 
 	return Render(c, http.StatusOK,
-		components.Root(components.MovieWrapper(graphComp, movieInfoDto), "movie:"+movieId,
+		components.Root(components.MovieWrapper(graphComp, movieInfoDto), movieInfoDto.MovieInfoDb.Title,
 			float64(time.Since(st).Seconds()),
 		),
 	)
@@ -111,7 +111,15 @@ func GraphById(c echo.Context) error {
 		return err
 	}
 
+	movieInfoDto, err := services.GetMovieInfos(movieId, dateRange)
+	if err != nil {
+		return err
+	}
+
 	c.Response().Header().Set("HX-Push-Url", fmt.Sprintf("/movie/%s?metric=%s&range=%s", movieId, movieMetricInput, dateRangeInput))
 
+	Render(c, http.StatusOK, components.StatBox(
+		components.StatBoxView(movieInfoDto.MovieViewDto), "stat-1", "true"),
+	)
 	return Render(c, http.StatusOK, graphComp)
 }

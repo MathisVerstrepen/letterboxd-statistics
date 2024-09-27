@@ -148,9 +148,9 @@ templ infoBarBottomRight(movieInfoDto *dto.MovieInfoDTO) {
 
         <div class="h-full w-full p-6 rounded-r-3xl border-2 border-l-0 border-white border-opacity-10
             flex justify-between">
-            @statBox(statBoxView(movieInfoDto.MovieViewDto))
-            @statBox(statBoxWeekView())
-            @statBox(statBoxOther())
+            @StatBox(StatBoxView(movieInfoDto.MovieViewDto), "stat-1", "false")
+            @StatBox(StatBoxWeekView(), "stat-2", "false")
+            @StatBox(StatBoxOther(), "stat-3", "false")
         </div>
     </div>
 }
@@ -168,9 +168,12 @@ templ infoBarImageBackdrop(poster string, title string) {
     </div>
 }
 
-templ statBox(content templ.Component) {
+templ StatBox(content templ.Component, statId string, oob string) {
     <div class="z-20 backdrop-blur bg-black bg-opacity-30 w-[30%] rounded-2xl
-        flex items-center px-6 relative">
+        flex items-center px-6 relative"
+        id={ statId }
+        hx-swap-oob={ oob }
+    >
         @content
     </div>
 }
@@ -180,7 +183,7 @@ func formatNumber(number int) string {
     return p.Sprintf("%d", number)
 }
 
-templ statBoxView(movieViewDto *dto.MovieViewDTO) {
+templ StatBoxView(movieViewDto *dto.MovieViewDTO) {
     <div class="h-10 w-10 opacity-50">
         @UseIcon("eye", "white", "auto")
     </div>
@@ -192,10 +195,10 @@ templ statBoxView(movieViewDto *dto.MovieViewDTO) {
     </div>
 }
 
-templ statBoxWeekView() {
+templ StatBoxWeekView() {
     <p class="text-white opacity-80 font-bold text-xl ml-4">Not available</p>
 }
 
-templ statBoxOther() {
+templ StatBoxOther() {
     <p class="text-white opacity-80 font-bold text-xl ml-4">Not available</p>
 }
