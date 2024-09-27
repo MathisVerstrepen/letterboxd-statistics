@@ -27,12 +27,6 @@ templ layout(contents templ.Component, title string, renderTime float64) {
 			<meta name="theme-color" content="#ffffff"/>
 
 			<link rel="stylesheet" type="text/css" href="/assets/css/output.css"/>
-            if (environment() != "prod") {
-            // during development, use the raw.githack.com link to get the latest version of the CSS fast for convenience
-            <link rel="stylesheet" type="text/css" href="https://raw.githack.com/MathisVerstrepen/templ_ui_library/main/assets/css/output.css">
-            } else {
-            <link rel="stylesheet" type="text/css" href="/assets/css/templ_ui_library.css">
-            }
 
 			<title>{ title }</title>
 

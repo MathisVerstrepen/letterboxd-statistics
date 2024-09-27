@@ -33,7 +33,7 @@ func getGraphComp(movieId string, movieMetric models.Metric, graphDateRange mode
 		RendererPath: "assets/graphs/renderHTML.js",
 		BaseHTMLPath: "assets/graphs/d3.html",
 	}
-	svg, err := chartEngine.GetSVG(dataString, movieMetric, graphDateRange, true)
+	svg, err := chartEngine.GetSVG(dataString, movieMetric, graphDateRange, false)
 	if err != nil {
 		return nil, err
 	}
