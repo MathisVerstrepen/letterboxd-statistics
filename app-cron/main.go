@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"slices"
 
 	"diikstra.fr/letterboxd-statistics/app-cron/src/db"
 	"diikstra.fr/letterboxd-statistics/app-cron/src/letterboxd"
@@ -35,14 +36,16 @@ func main() {
 		letterboxdGetter.SetMovieBackdropThreaded(popularMovies, &dbMovieIds)
 
 		moviesStat, _ := letterboxdGetter.GetMovieStatsThreaded(popularMovies)
+		addedMovies := []string{}
 		for movieId, movieStat := range moviesStat {
-			if movieStat == nil {
+			if movieStat == nil || slices.Contains(addedMovies, movieId) {
 				continue
 			}
 
-			db.Rdb.TsAdd(db.WatchCount.TsKey(movieId, dateRange), float64(movieStat.WatchCount))
-			db.Rdb.TsAdd(db.ListCount.TsKey(movieId, dateRange), float64(movieStat.ListCount))
-			db.Rdb.TsAdd(db.LikeCount.TsKey(movieId, dateRange), float64(movieStat.LikeCount))
+			db.Rdb.TsAdd(db.WatchCount.TsKey(movieId), float64(movieStat.WatchCount))
+			db.Rdb.TsAdd(db.ListCount.TsKey(movieId), float64(movieStat.ListCount))
+			db.Rdb.TsAdd(db.LikeCount.TsKey(movieId), float64(movieStat.LikeCount))
+			addedMovies = append(addedMovies, movieId)
 		}
 
 		for _, movie := range popularMovies.Movies {

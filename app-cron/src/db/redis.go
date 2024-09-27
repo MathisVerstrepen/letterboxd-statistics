@@ -47,8 +47,8 @@ func (dateRange DateRange) GetUrlDateRange() string {
 	}
 }
 
-func (metric Metric) TsKey(movieId string, dateRange DateRange) string {
-	return fmt.Sprintf("movies:%s:%s:%s", metric, movieId, dateRange)
+func (metric Metric) TsKey(movieId string) string {
+	return fmt.Sprintf("movies:%s:%s", metric, movieId)
 }
 
 func (db *RDB) Init() {
