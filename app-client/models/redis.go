@@ -26,8 +26,8 @@ type LetterboxdDateRange string
 
 const (
 	WatchCount          Metric              = "watchcount"
-	ListCount           Metric              = "listcount"
 	LikeCount           Metric              = "likecount"
+	Rating              Metric              = "rating"
 	LastDay             DateRange           = "d"
 	LastWeek            DateRange           = "w"
 	LastMonth           DateRange           = "m"

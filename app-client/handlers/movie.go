@@ -43,8 +43,8 @@ func getGraphComp(movieId string, movieMetric models.Metric, graphDateRange mode
 
 func parseMetric(movieMetricInput string) models.Metric {
 	var movieMetric models.Metric
-	if movieMetricInput == "listcount" {
-		movieMetric = models.ListCount
+	if movieMetricInput == "rating" {
+		movieMetric = models.Rating
 	} else if movieMetricInput == "likecount" {
 		movieMetric = models.LikeCount
 	} else {

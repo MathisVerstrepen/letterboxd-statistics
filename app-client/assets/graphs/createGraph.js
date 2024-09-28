@@ -2,8 +2,8 @@ function getChartName(metric) {
     switch (metric) {
         case "watchcount":
             return "Watch Count over Time";
-        case "listcount":
-            return "List Count over Time";
+        case "rating":
+            return "Rating over Time";
         case "likecount":
             return "Like Count over Time";
     }
@@ -39,6 +39,17 @@ function getDateRange(dateRange) {
             return [date.setDate(date.getDate() - 7), new Date()];
         case "m":
             return [date.setDate(date.getDate() - 30), new Date()];
+    }
+}
+
+function getYRange(ymin, ymax, metric, height) {
+    switch (metric) {
+        case "watchcount":
+            return d3.scaleLinear([ymin, ymax], [height, 0]);
+        case "rating":
+            return d3.scaleLinear([0, 5], [height, 0]);
+        case "likecount":
+            return d3.scaleLinear([ymin, ymax], [height, 0]);
     }
 }
 
@@ -112,7 +123,7 @@ window.createChart = function (pointsRawData, metricName, dateRangeStr) {
     });
 
     // Declare the y (vertical position) scale.
-    const y = d3.scaleLinear([ymin, ymax], [height, 0]);
+    const y = getYRange(ymin, ymax, metricName, height);
 
     // Add the y-axis, remove the domain line, add grid lines.
     svg.append("g")
