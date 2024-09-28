@@ -21,8 +21,8 @@ type Metric string
 
 const (
 	WatchCount Metric = "watchcount"
-	ListCount  Metric = "listcount"
 	LikeCount  Metric = "likecount"
+	Rating     Metric = "rating"
 )
 
 type DateRange string

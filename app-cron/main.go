@@ -43,8 +43,8 @@ func main() {
 			}
 
 			db.Rdb.TsAdd(db.WatchCount.TsKey(movieId), float64(movieStat.WatchCount))
-			db.Rdb.TsAdd(db.ListCount.TsKey(movieId), float64(movieStat.ListCount))
 			db.Rdb.TsAdd(db.LikeCount.TsKey(movieId), float64(movieStat.LikeCount))
+			db.Rdb.TsAdd(db.Rating.TsKey(movieId), float64(movieStat.Rating))
 			addedMovies = append(addedMovies, movieId)
 		}
 

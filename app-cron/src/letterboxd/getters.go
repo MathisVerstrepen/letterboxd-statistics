@@ -148,8 +148,8 @@ func (lg LetterboxdGetter) GetPopularMovies(n int, offset int, dateRange string)
 
 type MovieStat struct {
 	WatchCount int
-	ListCount  int
 	LikeCount  int
+	Rating     float32
 }
 
 func extractNumber(text string) (int, error) {
@@ -197,17 +197,6 @@ func (lg LetterboxdGetter) GetMovieStats(movieUrl string) (*MovieStat, error) {
 		return nil, err
 	}
 
-	listNode := gosoup.GetNodeBySelector(htmlBody, &gosoup.HtmlSelector{
-		ClassNames: "icon-list",
-		Tag:        "a",
-		Multiple:   false,
-	})
-	listTitle := gosoup.GetAttribute(listNode[0], "title")
-	listStat, err := extractNumber(listTitle)
-	if err != nil {
-		return nil, err
-	}
-
 	likeNode := gosoup.GetNodeBySelector(htmlBody, &gosoup.HtmlSelector{
 		ClassNames: "icon-liked",
 		Tag:        "a",
@@ -219,11 +208,10 @@ func (lg LetterboxdGetter) GetMovieStats(movieUrl string) (*MovieStat, error) {
 		return nil, err
 	}
 
-	fmt.Printf("Found stats WatchCount [%15d], ListCount [%15d], LikeCount [%15d] for movie [%50s]\n", watchStat, listStat, likeStat, movieUrl)
+	fmt.Printf("Found stats WatchCount [%15d], LikeCount [%15d] for movie [%50s]\n", watchStat, likeStat, movieUrl)
 
 	return &MovieStat{
 		WatchCount: watchStat,
-		ListCount:  listStat,
 		LikeCount:  likeStat,
 	}, nil
 }
@@ -239,20 +227,21 @@ func (lg LetterboxdGetter) GetMovieStatsThreaded(movies *PopularMovies) (map[str
 		wg.Add(1)
 		sem <- struct{}{}
 
-		go func(movieId string, movieUrl string) {
+		go func(movieId string, movieUrl string, movieRating float32) {
 			defer wg.Done()
 
 			movieStat, err := lg.GetMovieStats(movieUrl)
 			if err != nil {
 				log.Default().Println(err)
 			}
+			movieStat.Rating = movieRating
 
 			mu.Lock()
 			moviesStat[movieId] = movieStat
 			mu.Unlock()
 
 			<-sem
-		}(movie.Id, movie.Link)
+		}(movie.Id, movie.Link, movie.Rating)
 	}
 
 	wg.Wait()
