@@ -187,7 +187,14 @@ templ StatBoxView(movieViewDto *dto.MovieViewDTO) {
     <div class="h-10 w-10 opacity-50">
         @UseIcon("eye", "white", "auto")
     </div>
-    <p class="text-white opacity-80 font-bold text-xl ml-4">{ formatNumber(movieViewDto.TotalViews) }</p>
+    <div>
+        <p class="text-white opacity-80 font-bold text-xl ml-4">{ formatNumber(movieViewDto.TotalViews) }</p>
+        if movieViewDto.Evolution >= 0 {
+            <p class="text-green-600 opacity-80 text-right text-sm ">{ fmt.Sprintf("+%.2f%%", movieViewDto.Evolution) }</p>
+        } else {
+            <p class="text-red-600 opacity-80 text-right text-sm">{ fmt.Sprintf("%.2f%%", movieViewDto.Evolution) }</p>
+        }
+    </div>
 
     <div class="absolute right-6">
         <p class="text-white opacity-80 text-right text-lg">+{ formatNumber(movieViewDto.LastRangeViews) }</p>

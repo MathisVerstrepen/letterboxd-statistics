@@ -7,6 +7,7 @@ import (
 
 	"diikstra.fr/letterboxd-statistics/app-client/components"
 	"diikstra.fr/letterboxd-statistics/app-client/models"
+	"diikstra.fr/letterboxd-statistics/app-client/models/redis"
 	"github.com/labstack/echo/v4"
 )
 
@@ -33,7 +34,7 @@ func HomeHandler(c echo.Context) error {
 	rawDateRangeInput := c.QueryParam("range")
 	dateRangeInput := models.StringToLetterboxdDateRange(rawDateRangeInput)
 
-	popularityOrder, err := models.Rdb.GetPopularityOrder(dateRangeInput)
+	popularityOrder, err := redis.Rdb.GetPopularityOrder(dateRangeInput)
 	if err != nil {
 		return err
 	}

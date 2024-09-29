@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"diikstra.fr/letterboxd-statistics/app-client/models"
+	"diikstra.fr/letterboxd-statistics/app-client/models/redis"
 	"github.com/a-h/templ"
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
@@ -22,7 +23,7 @@ func Init() {
 
 	fmt.Printf("[INIT] Env : %s\n", os.Getenv("ENV"))
 
-	models.Rdb.Init()
+	redis.Rdb.Init()
 	models.Pdb.Init()
 
 	fmt.Println("[INIT] Startup sequence done.")

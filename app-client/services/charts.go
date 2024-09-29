@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"diikstra.fr/letterboxd-statistics/app-client/models"
+	"diikstra.fr/letterboxd-statistics/app-client/models/redis"
 	"github.com/labstack/gommon/log"
 )
 
@@ -49,8 +50,8 @@ func (chart Chart) GetSVG(data string, metric models.Metric, dateRange models.Da
 		return "", errors.New("data cannot be empty")
 	}
 
-	rdbKey := models.ChartKey(chart.MovieId, metric, dateRange)
-	cachedChartSvg, err := models.Rdb.GetChartSVG(rdbKey)
+	rdbKey := redis.ChartKey(chart.MovieId, metric, dateRange)
+	cachedChartSvg, err := redis.Rdb.GetChartSVG(rdbKey)
 	if err != nil {
 		log.Error(err)
 		return "", err
@@ -65,7 +66,7 @@ func (chart Chart) GetSVG(data string, metric models.Metric, dateRange models.Da
 		chartSvg := string(chartSvgBytes)
 		optimizeSVG(&chartSvg)
 
-		err = models.Rdb.SetChartSVG(rdbKey, &chartSvg)
+		err = redis.Rdb.SetChartSVG(rdbKey, &chartSvg)
 		if err != nil {
 			log.Error(err)
 			return "", err

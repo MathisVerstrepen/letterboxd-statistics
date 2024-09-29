@@ -8,7 +8,9 @@ type MovieInfoDTO struct {
 }
 
 type MovieViewDTO struct {
-	TotalViews     int
-	LastRangeViews int
-	Range          string
+	TotalViews         int
+	LastRangeViews     int
+	PreviousRangeViews int
+	Range              string
+	Evolution          float64
 }

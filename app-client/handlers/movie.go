@@ -9,14 +9,15 @@ import (
 
 	"diikstra.fr/letterboxd-statistics/app-client/components"
 	"diikstra.fr/letterboxd-statistics/app-client/models"
+	"diikstra.fr/letterboxd-statistics/app-client/models/redis"
 	"diikstra.fr/letterboxd-statistics/app-client/services"
 	"github.com/a-h/templ"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/gommon/log"
 )
 
-func getGraphComp(movieId string, movieMetric models.Metric, graphDateRange models.DateRange, letterboxdDateRange string) (templ.Component, error) {
-	data, err := models.Rdb.GetMovieFullRangeTS(movieMetric.TsKey(movieId), graphDateRange)
+func getGraphComp(movieId string, movieMetric models.Metric, graphDateRange models.DateRange) (templ.Component, error) {
+	data, err := redis.Rdb.GetMovieFullRangeTSFromNow(movieMetric.TsKey(movieId), graphDateRange)
 	if err != nil {
 		log.Error(err)
 		return nil, err
@@ -83,7 +84,7 @@ func MoviePageById(c echo.Context) error {
 		return err
 	}
 
-	graphComp, err := getGraphComp(movieId, movieMetric, dateRange, "w")
+	graphComp, err := getGraphComp(movieId, movieMetric, dateRange)
 	if err != nil {
 		return err
 	}
@@ -106,7 +107,7 @@ func GraphById(c echo.Context) error {
 	dateRangeInput := c.QueryParam("range")
 	dateRange := parseDateRange(dateRangeInput)
 
-	graphComp, err := getGraphComp(movieId, movieMetric, dateRange, "w")
+	graphComp, err := getGraphComp(movieId, movieMetric, dateRange)
 	if err != nil {
 		return err
 	}
