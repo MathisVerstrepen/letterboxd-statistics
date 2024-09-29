@@ -142,7 +142,7 @@ templ infoBarBottomRight(movieInfoDto *dto.MovieInfoDTO) {
     row-start-2">
         @infoBarImageBackdrop(movieInfoDto.MovieInfoDb.Poster, movieInfoDto.MovieInfoDb.Title)
 
-        <div class="z-20 absolute bottom-6 -left-64 h-[calc(100%+11.5rem-3rem)] w-56 backdrop-blur bg-black bg-opacity-30 rounded-2xl">
+        <div class="z-20 absolute bottom-6 -left-64 h-[calc(100%+11.5rem-3rem)] w-56 bg-black bg-opacity-30 rounded-2xl">
             <p class="text-white opacity-80 font-bold text-xl text-center mt-6">Not available</p>
         </div>
 
@@ -169,7 +169,7 @@ templ infoBarImageBackdrop(poster string, title string) {
 }
 
 templ StatBox(content templ.Component, statId string, oob string) {
-    <div class="z-20 backdrop-blur bg-black bg-opacity-30 w-[30%] rounded-2xl
+    <div class="z-20 bg-black bg-opacity-30 w-[30%] rounded-2xl
         flex items-center px-6 relative"
         id={ statId }
         hx-swap-oob={ oob }
