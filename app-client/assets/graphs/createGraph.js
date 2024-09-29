@@ -155,11 +155,19 @@ window.createChart = function (pointsRawData, metricName, dateRangeStr) {
         });
 
     // Append a path for the area.
-    svg.append("path")
-        .attr("fill", "url(#chartGradient)")
-        .attr("fill-opacity", 0.2)
-        .attr("stroke", "none")
-        .attr("d", area(aapl));
+    if (metricName == "rating") {
+        svg.append("path")
+            .attr("fill", "rgba(255, 255, 255, 0.1)")
+            .attr("fill-opacity", 0.2)
+            .attr("stroke", "none")
+            .attr("d", area(aapl));
+    } else {
+        svg.append("path")
+            .attr("fill", "url(#chartGradient)")
+            .attr("fill-opacity", 0.2)
+            .attr("stroke", "none")
+            .attr("d", area(aapl));
+    }
 
     // Declare the line generator.
     const line = d3
@@ -172,11 +180,19 @@ window.createChart = function (pointsRawData, metricName, dateRangeStr) {
         });
 
     // Append a path for the line.
-    svg.append("path")
-        .attr("fill", "none")
-        .attr("stroke", "url(#chartGradient)")
-        .attr("stroke-width", "0.2vw")
-        .attr("d", line(aapl));
+    if (metricName == "rating") {
+        svg.append("path")
+            .attr("fill", "none")
+            .attr("stroke", "rgba(255, 255, 255, 0.75)")
+            .attr("stroke-width", "3px")
+            .attr("d", line(aapl));
+    } else {
+        svg.append("path")
+            .attr("fill", "none")
+            .attr("stroke", "url(#chartGradient)")
+            .attr("stroke-width", "3px")
+            .attr("d", line(aapl));
+    }
 
     svg.append('text')
         .attr('class', 'chart-title')
