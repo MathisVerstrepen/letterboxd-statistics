@@ -13,7 +13,7 @@ import (
 func GetMovieInfos(movieId string, dateRange models.DateRange) (*dto.MovieInfoDTO, error) {
 	start := time.Now()
 
-	movieInfoKey := redis.MovieInfoKey(movieId)
+	movieInfoKey := redis.MovieInfoKey(movieId, dateRange)
 	movieInfoDTO, err := redis.Rdb.GetMovieInfoDTO(movieInfoKey)
 	if err == nil {
 		return movieInfoDTO, nil

@@ -6,10 +6,11 @@ import (
 	"time"
 
 	"diikstra.fr/letterboxd-statistics/app-client/dto"
+	"diikstra.fr/letterboxd-statistics/app-client/models"
 )
 
-func MovieInfoKey(movieId string) string {
-	return fmt.Sprintf("movies:%s:info", movieId)
+func MovieInfoKey(movieId string, dateRange models.DateRange) string {
+	return fmt.Sprintf("movies:%s:%s:info", movieId, dateRange)
 }
 
 func (rdb *DB) GetMovieInfoDTO(key string) (*dto.MovieInfoDTO, error) {
