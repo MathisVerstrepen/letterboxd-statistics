@@ -32,7 +32,7 @@ templ Home(moviesMeta []models.MovieMeta, selectedRange models.LetterboxdDateRan
                 href={ templ.SafeURL("/movie/" + movieMeta.Id + "?metric=watchcount&range=week") }
             >
                 <img src={ movieMeta.Poster } class="rounded-xl shadow-lg h-28"
-                    alt={ movieMeta.Title } loading="lazy">
+                    alt="" loading="lazy" height="112" width="75">
                 <div class="py-2 pl-4 flex flex-col justify-between content-between h-full w-full">
                     <p class="font-bold text-white opacity-50 ">{fmt.Sprintf("%d", idx + 1)}</p>
                     <h2 class="font-bold text-white">{movieMeta.Title}</h2>                
