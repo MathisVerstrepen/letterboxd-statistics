@@ -19,10 +19,14 @@ func GetMovieInfos(movieId string, dateRange models.DateRange) (*dto.MovieInfoDT
 		return movieInfoDTO, nil
 	}
 
+	tsKey := models.Rating.TsKey(movieId)
+	movieLastRatingTS, err := redis.Rdb.GetMovieLastTS(tsKey)
+
 	movieInfoDb, err := models.Pdb.GetMovieInfos(movieId)
 	if err != nil {
 		return nil, err
 	}
+	movieInfoDb.Rating = float32(movieLastRatingTS.Value)
 
 	movieViewDto, err := movie.GetViewStat(movieId, dateRange)
 	if err != nil {
