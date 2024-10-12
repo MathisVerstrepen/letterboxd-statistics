@@ -48,16 +48,16 @@ func (dateRange DateRange) ToString() string {
 
 func StringToLetterboxdDateRange(rawDateRange string) LetterboxdDateRange {
 	switch rawDateRange {
-	case "week":
-		return "w"
-	case "month":
-		return "m"
-	case "year":
-		return "y"
-	case "all":
-		return "a"
+	case "w":
+		return LetterboxdLastWeek
+	case "m":
+		return LetterboxdLastMonth
+	case "y":
+		return LetterboxdLastYear
+	case "a":
+		return LetterboxdLastAll
 	default:
-		return "w"
+		return LetterboxdLastWeek
 	}
 }
 

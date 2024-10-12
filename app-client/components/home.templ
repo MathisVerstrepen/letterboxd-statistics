@@ -29,7 +29,7 @@ templ Home(moviesMeta []models.MovieMeta, selectedRange models.LetterboxdDateRan
             <a class="flex flex-row p-2 m-2 rounded-2xl
                 bg-gradient-to-t from-[#ffffff18] via-transparent to-transparent
                 hover:from-[#ffffff18] hover:via-[#ffffff18] hover:to-[#ffffff18]"
-                href={ templ.SafeURL("/movie/" + movieMeta.Id + "?metric=watchcount&range=week") }
+                href={ templ.SafeURL("/movie/" + movieMeta.Id + "?metric=watchcount&range=week&from=" + string(selectedRange)) }
             >
                 <img src={ movieMeta.Poster } class="rounded-xl shadow-lg h-28"
                     alt="" loading="lazy" height="112" width="75">
@@ -48,10 +48,10 @@ templ rangeSelector(selectedRange models.LetterboxdDateRange) {
 <div class="w-fit mx-auto mt-4 flex flex-row space-x-1 justify-center items-center rounded-2xl overflow-hidden
     p-1 bg-white bg-opacity-10
     border-2 border-white border-opacity-10 backdrop-blur-xl">
-    @rangeSelectorButton("Week", "/?range=week", selectedRange == models.LetterboxdLastWeek)
-    @rangeSelectorButton("Month", "/?range=month", selectedRange == models.LetterboxdLastMonth)
-    @rangeSelectorButton("Year", "/?range=year", selectedRange == models.LetterboxdLastYear)
-    @rangeSelectorButton("All", "/?range=all", selectedRange == models.LetterboxdLastAll)
+    @rangeSelectorButton("Week", "/?range=w", selectedRange == models.LetterboxdLastWeek)
+    @rangeSelectorButton("Month", "/?range=m", selectedRange == models.LetterboxdLastMonth)
+    @rangeSelectorButton("Year", "/?range=y", selectedRange == models.LetterboxdLastYear)
+    @rangeSelectorButton("All", "/?range=a", selectedRange == models.LetterboxdLastAll)
 </div>
 }
 

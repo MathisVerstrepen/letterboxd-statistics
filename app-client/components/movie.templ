@@ -12,10 +12,10 @@ templ Movie(svg string) {
     @templ.Raw(svg)
 }
 
-templ MovieWrapper(content templ.Component, movieInfoDto *dto.MovieInfoDTO) {
+templ MovieWrapper(content templ.Component, movieInfoDto *dto.MovieInfoDTO, from string) {
     <div class="grid grid-cols-[360px_auto] grid-rows-[85%_15%] h-full w-full relative">
         @imageBackground(movieInfoDto.MovieInfoDb.Backdrop, movieInfoDto.MovieInfoDb.Title)
-        @backHomeButton()
+        @backHomeButton(from)
         @movieInfoCard(movieInfoDto.MovieInfoDb)
         @movieInfoBar(movieInfoDto)
 
@@ -26,16 +26,17 @@ templ MovieWrapper(content templ.Component, movieInfoDto *dto.MovieInfoDTO) {
     </div>
 
     <script>
-        const movieId = window.location.pathname.split('/').pop();
+        var movieId = window.location.pathname.split('/').pop();
         var metric = "watchcount";
         var range = "week";
+        var from = window.location.search.split('from=').pop();
 
         const metricNode = document.getElementById('select-metric');
         metricNode.addEventListener('change', (event) => {
             metric = event.target.value;
             htmx.ajax(
                 "GET",
-                `/movie/${movieId}/graph?metric=${metric}&range=${range}`,
+                `/movie/${movieId}/graph?metric=${metric}&range=${range}&from=${from}`,
                 {
                     target : '#movie-stat-graph',
                 }
@@ -47,7 +48,7 @@ templ MovieWrapper(content templ.Component, movieInfoDto *dto.MovieInfoDTO) {
             range = event.target.value;
             htmx.ajax(
                 "GET",
-                `/movie/${movieId}/graph?metric=${metric}&range=${range}`,
+                `/movie/${movieId}/graph?metric=${metric}&range=${range}&from=${from}`,
                 {
                     target : '#movie-stat-graph',
                 }
@@ -67,8 +68,8 @@ templ imageBackground(backdropUrl string, title string) {
         bg-gradient-to-t from-[#14181c] via-[#14181c] via-30% to-[#14181cc5]"></div>
 }
 
-templ backHomeButton() {
-    <a href="/" 
+templ backHomeButton(from string) {
+    <a href={ templ.SafeURL("/?range=" + from) }
         class="absolute top-5 left-5 z-20 flex space-x-2 items-center m-4 p-2 rounded-xl 
             opacity-50 hover:opacity-100 duration-200">
         @UseIcon("back", "white", "medium")

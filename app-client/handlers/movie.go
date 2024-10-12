@@ -78,6 +78,7 @@ func MoviePageById(c echo.Context) error {
 
 	movieMetric := parseMetric(c.QueryParam("metric"))
 	dateRange := parseDateRange(c.QueryParam("range"))
+	from := c.QueryParam("from")
 
 	movieInfoDto, err := services.GetMovieInfos(movieId, dateRange)
 	if err != nil {
@@ -90,7 +91,7 @@ func MoviePageById(c echo.Context) error {
 	}
 
 	return Render(c, http.StatusOK,
-		components.Root(components.MovieWrapper(graphComp, movieInfoDto), movieInfoDto.MovieInfoDb.Title,
+		components.Root(components.MovieWrapper(graphComp, movieInfoDto, from), movieInfoDto.MovieInfoDb.Title,
 			float64(time.Since(st).Seconds()),
 		),
 	)
@@ -106,6 +107,7 @@ func GraphById(c echo.Context) error {
 	movieMetric := parseMetric(movieMetricInput)
 	dateRangeInput := c.QueryParam("range")
 	dateRange := parseDateRange(dateRangeInput)
+	from := c.QueryParam("from")
 
 	graphComp, err := getGraphComp(movieId, movieMetric, dateRange)
 	if err != nil {
@@ -117,7 +119,8 @@ func GraphById(c echo.Context) error {
 		return err
 	}
 
-	c.Response().Header().Set("HX-Push-Url", fmt.Sprintf("/movie/%s?metric=%s&range=%s", movieId, movieMetricInput, dateRangeInput))
+	c.Response().Header().Set("HX-Push-Url",
+		fmt.Sprintf("/movie/%s?metric=%s&range=%s&from=%s", movieId, movieMetricInput, dateRangeInput, from))
 
 	Render(c, http.StatusOK, components.StatBox(
 		components.StatBoxView(movieInfoDto.MovieViewDto), "stat-1", "true"),
