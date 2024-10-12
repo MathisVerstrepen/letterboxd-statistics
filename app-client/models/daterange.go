@@ -30,7 +30,7 @@ func (dateRange DateRange) GetUnixTimestamp() int64 {
 	if dateRange == "w" {
 		return timenow.Add(-1 * 7 * 24 * time.Hour).UnixMilli()
 	}
-	return timenow.Add(-1 * 30 * 7 * 24 * time.Hour).UnixMilli()
+	return timenow.Add(-1 * 30 * 24 * time.Hour).UnixMilli()
 }
 
 func (dateRange DateRange) ToString() string {
